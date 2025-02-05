@@ -31,7 +31,7 @@ namespace Bankify.Application.Features.Queries.Accounts
                     RecordStatus.InActive=>await _accounts.Where(a=>a.RecordStatus==RecordStatus.InActive).ToListAsync(),
                     _=>await _accounts.Where(a=>a.RecordStatus==RecordStatus.Active).ToListAsync(),
                 };
-                if (accounts is null)
+                if (accounts.Count == 0)
                 {
                     result.AddError(ErrorCode.NotFound, "No Accounts Found!");
                     return result;

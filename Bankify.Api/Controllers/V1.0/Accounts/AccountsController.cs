@@ -14,5 +14,12 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError?HandleErrorResponse(result.Errors):Ok(result.Payload);
         }
 
+        [HttpGet("GetById")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var query = new GetAccountById { Id = id };
+            var result = await _mediator.Send(query);
+            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result.Payload);
+        }
     }
 }
