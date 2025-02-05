@@ -24,6 +24,13 @@ namespace Bankify.Application.Features.Commands.User
             var result = new OperationalResult<BUser>();
             try
             {
+                var userExist= await _users.ExistWhereAsync(u => u.Email == request.CreateUserRequest.Email ||
+                (u.FirstName==request.CreateUserRequest.FirstName &&  u.LastName == request.CreateUserRequest.LastName));
+                if(userExist)
+                {
+                    result.AddError(ErrorCode.RecordFound, "User already exist");
+                    return result;
+                }
                 var user = new BUser
                 {
                     FirstName = request.CreateUserRequest.FirstName,
