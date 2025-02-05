@@ -1,5 +1,6 @@
 ﻿using Bankify.Application.Common.Helpers.HttpService;
 using Bankify.Application.Common.Helpers.IHttpService;
+using Bankify.Application.Services;
 using Lms.Application.Common.Helpers.HttpService;
 using MediatR;
 using System.ComponentModel.Design;
@@ -16,7 +17,7 @@ namespace Bankify.Api.Registrars
             //builder.Services.AddScoped<IIdentityService, IdentityService>();
             //builder.Services.AddScoped<IUserService, UsersService>();
             builder.Services.AddScoped<IHttpService, HttpService>();
-            //builder.Services.AddSingleton<IFileStorageService, SftpFileStorageService>();
+            builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
             //builder.Services.AddScoped<IContractLoggerService, ContractLoggerService>();
             //builder.Services.AddScoped<ICaseActivityLoggerService, CaseActivityLogger>();
             //builder.Services.AddScoped<IEmailSender, EmailSenderServices>();

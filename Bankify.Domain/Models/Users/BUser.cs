@@ -3,10 +3,9 @@ using Bankify.Domain.Common;
 using Bankify.Domain.Common.Shared;
 using Bankify.Domain.Models.Accounts;
 using Bankify.Domain.Validators;
-using System.ComponentModel.DataAnnotations;
 namespace Bankify.Domain.Models.Users
 {
-    public class BUser:BaseEntity
+    public class BUser : BaseEntity
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -17,14 +16,14 @@ namespace Bankify.Domain.Models.Users
         public string? Address { get; set; }
         public IEnumerable<Account> Accounts { get; set; }
         public string? ProfilePicture { get; set; }
-        
-        public static BUser Create(string firstName, string lastName, 
-            string email, string password, string phoneNumber, 
-            string? address, string? profilePicture,int id=0)
+
+        public static BUser Create(string firstName, string lastName,
+            string email, string password, string phoneNumber,
+            string? address, string? profilePicture, int id = 0)
         {
             var userDataValidator = new UserDataValidator();
-            
-            var newUser= new BUser
+
+            var newUser = new BUser
             {
                 Id = id,
                 FirstName = firstName,
@@ -42,6 +41,26 @@ namespace Bankify.Domain.Models.Users
             validationResult.Errors.ForEach(vr => exception.ValidationErrors.Add(vr.ErrorMessage));
             throw exception;
 
+        }
+        public void Update(string firstName, string lastName,
+            string email, string password, string phoneNumber,
+            string? address, string? profilePicture)
+        {
+            var userDataValidator = new UserDataValidator();
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Password = password;
+            PhoneNumber = phoneNumber;
+            Address = address;
+            ProfilePicture = profilePicture;
+
+            var validationResult = userDataValidator.Validate(this);
+            if (validationResult.IsValid) return;
+
+            var exception = new NotValidException("User has no valid information");
+            validationResult.Errors.ForEach(vr => exception.ValidationErrors.Add(vr.ErrorMessage));
+            throw exception;
         }
     }
 }
