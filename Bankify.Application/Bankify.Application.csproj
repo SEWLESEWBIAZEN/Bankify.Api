@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\DTOs\Users\Response\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
@@ -19,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.1" />
     <PackageReference Include="Microsoft.Graph" Version="5.69.0" />

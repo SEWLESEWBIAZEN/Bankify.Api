@@ -1,7 +1,7 @@
 ﻿using Bankify.Application.Repository;
+using Bankify.Domain.Models;
 using Bankify.Domain.Models.Accounts;
 using Bankify.Domain.Models.Users;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace Bankify.Api.Registrars
 {
@@ -12,6 +12,8 @@ namespace Bankify.Api.Registrars
 
             builder.Services.AddScoped(typeof(IRepositoryBase<BUser>), typeof(RepositoryBase<BUser>));
             builder.Services.AddScoped(typeof(IRepositoryBase<Account>), typeof(RepositoryBase<Account>));
+            builder.Services.AddScoped(typeof(IRepositoryBase<AccountType>), typeof(RepositoryBase<AccountType>));
+            builder.Services.AddScoped(typeof(IRepositoryBase<ActionLog>), typeof(RepositoryBase<ActionLog>));
 
         }
     }

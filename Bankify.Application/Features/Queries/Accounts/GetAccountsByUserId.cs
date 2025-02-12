@@ -2,49 +2,51 @@
 using Bankify.Application.Repository;
 using Bankify.Application.Services;
 using Bankify.Domain.Models.Accounts;
-using Bankify.Domain.Models.Shared;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bankify.Application.Features.Queries.Accounts
 {
-    public class GetAccountById:IRequest<OperationalResult<Account>>
+    public class GetAccountsByUserId : IRequest<OperationalResult<List<Account>>>
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
     }
-    internal class GetAccountByIdQueryHandler:IRequestHandler<GetAccountById, OperationalResult<Account>>
+
+    internal class GetAccountsByUserIdQueryHandler:IRequestHandler<GetAccountsByUserId, OperationalResult<List<Account>>>
     {
         private readonly IRepositoryBase<Account> _accounts;
         private readonly INetworkService _networkService;
-        public GetAccountByIdQueryHandler(IRepositoryBase<Account> accounts, INetworkService networkService)
+        public GetAccountsByUserIdQueryHandler(IRepositoryBase<Account> accounts, INetworkService networkService)
         {
             _accounts = accounts;
             _networkService = networkService;
         }
 
-        public async Task<OperationalResult<Account>> Handle(GetAccountById request, CancellationToken cancellationToken)
+        public async Task<OperationalResult<List<Account>>> Handle(GetAccountsByUserId request, CancellationToken cancellationToken)
         {
-            var result=new OperationalResult<Account>();
-            try
+            var result=new OperationalResult<List<Account>>();
+            try 
             {
                 var dbReachable = await _networkService.IsConnected();
                 if (!dbReachable)
                 {
                     result.AddError(ErrorCode.NetworkError, "Network Error(Unable to reach to database)");
                     return result;
+
                 }
-                if (request.Id == 0 || request.Id==null) 
+                if (request.UserId == 0 || request.UserId == null) 
                 {
-                    result.AddError(ErrorCode.EmptyRquest, "Empty Id is Sent");
+                    result.AddError(ErrorCode.EmptyRquest, "Empty User Id Sent");
                     return result;
                 }
-                var account=await _accounts.FirstOrDefaultAsync(a=>a.Id==request.Id && a.RecordStatus==RecordStatus.Active, "AccountType", "User");
-                if (account == null)
+
+                var accountsList = await _accounts.Where(a => a.UserId == request.UserId, "AccountType", "User").ToListAsync();
+                if (accountsList.Count == 0) 
                 {
-                    result.AddError(ErrorCode.NotFound, "Account Not Exist or NOT Active!");
+                    result.AddError(ErrorCode.NotFound, "No User Accounts Found!");
                     return result;
                 }
-                result.Payload = account;
-                
+                result.Payload = accountsList;
             }
             catch (Exception ex) 
             {

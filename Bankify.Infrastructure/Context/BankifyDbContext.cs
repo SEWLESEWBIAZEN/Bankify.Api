@@ -1,4 +1,5 @@
-﻿using Bankify.Domain.Models.Accounts;
+﻿using Bankify.Domain.Models;
+using Bankify.Domain.Models.Accounts;
 using Bankify.Domain.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,10 @@ namespace Bankify.Infrastructure.Context
         #region Accounts
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AccountType> AccountTypes { get; set; }
+        #endregion
+
+        #region ActionLog
+        public DbSet<ActionLog> ActionLogs { get; set; }
         #endregion
     }
 

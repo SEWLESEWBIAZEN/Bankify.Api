@@ -4,6 +4,7 @@ using Bankify.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bankify.Infrastructure.Migrations
 {
     [DbContext(typeof(BankifyDbContext))]
-    partial class BankifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250212065849_ActionLogTable")]
+    partial class ActionLogTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,12 +138,29 @@ namespace Bankify.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("LastUpdateDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("MainEntity")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RegisteredBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegisteredDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("SubEntityId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

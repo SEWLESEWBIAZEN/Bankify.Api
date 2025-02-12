@@ -4,6 +4,7 @@ using Bankify.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bankify.Infrastructure.Migrations
 {
     [DbContext(typeof(BankifyDbContext))]
-    partial class BankifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250212064025_ActionLoggerModel")]
+    partial class ActionLoggerModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,39 +115,6 @@ namespace Bankify.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AccountTypes");
-                });
-
-            modelBuilder.Entity("Bankify.Domain.Models.ActionLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Action")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ActionTakenBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ActionTakenOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MainEntity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SubEntityId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ActionLogs");
                 });
 
             modelBuilder.Entity("Bankify.Domain.Models.Users.BUser", b =>

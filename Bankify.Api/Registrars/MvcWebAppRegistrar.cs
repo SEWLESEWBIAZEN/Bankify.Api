@@ -30,10 +30,9 @@ namespace Bankify.Api.Registrars
                       Secure = CookieSecurePolicy.Always
                   }
             );
-
             app.MapGet("/", () => "Bankify - API");
             app.UseHttpsRedirection();
-           // app.UseAuthorization();
+            app.UseAuthorization();
             app.MapControllers();
             app.MigrateDatabase();
         }
