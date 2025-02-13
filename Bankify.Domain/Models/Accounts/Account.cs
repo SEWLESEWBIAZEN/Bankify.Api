@@ -1,5 +1,6 @@
 ﻿
 using Bankify.Domain.Common.Shared;
+using Bankify.Domain.Models.Transactions;
 using Bankify.Domain.Models.Users;
 
 namespace Bankify.Domain.Models.Accounts
@@ -12,7 +13,11 @@ namespace Bankify.Domain.Models.Accounts
         public int AccountTypeId { get; set; }
         public AccountType AccountType { get; set; }        
         public int UserId { get; set; }
-        public BUser User { get; set; }    
-        
+        public BUser User { get; set; }
+        public string CurrencyCode { get; set; } = "ETB";
+        public IEnumerable<ATransaction> Transactions { get; set; }
+        public IEnumerable<Transfer> TransfersFrom { get; set; }
+        public IEnumerable<Transfer> TransfersTo { get; set; }
+
     }
 }

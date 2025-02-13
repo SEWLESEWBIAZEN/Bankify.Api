@@ -26,6 +26,13 @@ namespace Bankify.Domain.Models.Shared
         Assign=5,
         Other=6
     }
+    public enum TransactionStatus
+    {
+        Failed = -1,
+        Pending=0,
+        Completed =1       
+
+    }
   
     
    
