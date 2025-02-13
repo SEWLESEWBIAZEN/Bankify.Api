@@ -43,13 +43,13 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
-        [HttpPut("Deposit")]
-        public async Task<IActionResult> Deposit([FromBody] DepositToAccountRequest depositToAccountRequest)
-        {
-            var command = new DepositToAccount { DepositToAccountRequest = depositToAccountRequest };
-            var result=await _mediator.Send(command);
-            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
-        }
+        //[HttpPut("Deposit")]
+        //public async Task<IActionResult> Deposit([FromBody] DepositToAccountRequest depositToAccountRequest)
+        //{
+        //    var command = new DepositToAccount { DepositToAccountRequest = depositToAccountRequest };
+        //    var result=await _mediator.Send(command);
+        //    return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
+        //}
 
         [HttpGet("GenerateAcountNumber")]
         public async Task<IActionResult> GenerateAcountNumber()

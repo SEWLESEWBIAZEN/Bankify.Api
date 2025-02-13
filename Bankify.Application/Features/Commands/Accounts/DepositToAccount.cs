@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bankify.Application.Common.Helpers;
+using MediatR;
 
 namespace Bankify.Application.Features.Commands.Accounts
 {
-    internal class DepositToAccount
+    public class DepositToAccount:IRequest<OperationalResult<DepositReciept>>
     {
+    }
+    public class DepositReciept
+    {
+         
     }
 }
