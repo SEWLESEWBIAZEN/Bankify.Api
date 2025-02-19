@@ -20,11 +20,19 @@ namespace Bankify.Infrastructure.Context
                 .HasForeignKey(ph => ph.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Account>()
+            modelBuilder.Entity<Account>()                
                .HasOne(p => p.AccountType)
                .WithMany(cc => cc.Accounts)
-               .HasForeignKey(ph => ph.AccountTypeId)
+               .HasForeignKey(ph => ph.AccountTypeId)               
                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Account>()
+                .Property(p => p.Balance)
+                .HasPrecision(38, 10);
+
+            modelBuilder.Entity<AccountType>()
+                .Property(tt => tt.InterestRate)
+                .HasPrecision(5, 2);
+
 
             modelBuilder.Entity<ATransaction>()
                 .HasOne(t=>t.Account)
@@ -36,6 +44,13 @@ namespace Bankify.Infrastructure.Context
                 .WithMany(a=>a.Transactions)
                 .HasForeignKey(fh=>fh.TransactionTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<ATransaction>()
+              .Property(p => p.BalanceBeforeTransaction)
+              .HasPrecision(38, 10);
+            modelBuilder.Entity<ATransaction>()
+              .Property(p => p.BalanceAfterTransaction)
+              .HasPrecision(38, 10);            
+
             modelBuilder.Entity<Transfer>()
                 .HasOne(t => t.TransferedFrom)
                 .WithMany(a => a.TransfersFrom)
@@ -46,6 +61,9 @@ namespace Bankify.Infrastructure.Context
                 .WithMany(a=>a.TransfersTo)
                 .HasForeignKey(fh=>fh.TransferredToId) 
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Transfer>()
+                .Property(t=>t.AmmountTransfered)
+                .HasPrecision(38, 10);       
 
 
 

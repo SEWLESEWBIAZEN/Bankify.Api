@@ -29,4 +29,8 @@
     <ProjectReference Include="..\Bankify.Infrastructure\Bankify.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\DTOs\TransactionTypes\Response\NewFolder\" />
+  </ItemGroup>
+
 </Project>

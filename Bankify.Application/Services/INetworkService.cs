@@ -1,10 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Threading.Tasks;
 
 namespace Bankify.Application.Services
 {
@@ -34,7 +31,7 @@ namespace Bankify.Application.Services
                 var builder = new SqlConnectionStringBuilder(connectionString);
                 string serverName = builder.DataSource;
 
-               
+
                 // Check if it's a local instance
                 if (IsLocalServer(serverName))
                 {
@@ -58,18 +55,18 @@ namespace Bankify.Application.Services
             try
             {
                 string machineName = Environment.MachineName;
-                string[] localHosts = [ "(local)", "localhost","mssql" ];
+                string[] localHosts = ["(local)", "localhost", "mssql"];
 
                 // Check against known local identifiers
                 foreach (var item in localHosts)
                 {
-                     if(serverName.Contains(item, StringComparison.OrdinalIgnoreCase))
+                    if (serverName.Contains(item, StringComparison.OrdinalIgnoreCase))
                     {
-                        return true;                     
+                        return true;
 
                     };
-                    
-                }                
+
+                }
 
                 // Check if the server name resolves to a loopback IP (127.x.x.x or ::1)
                 IPAddress[] addresses = Dns.GetHostAddresses(serverName);

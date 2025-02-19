@@ -51,8 +51,24 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
-        [HttpGet("GenerateAcountNumber")]
-        public async Task<IActionResult> GenerateAcountNumber()
+        [HttpPut("Withdraw")]
+        public async Task<IActionResult> Withdraw([FromBody] WithdrawFromAccountRequest withdrawFromAccountRequest)
+        {
+            var command = new WithdrawFromAccount { WithdrawFromAccountRequest = withdrawFromAccountRequest };
+            var result = await _mediator.Send(command);
+            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
+        }
+
+        [HttpPut("Transfer")]
+        public async Task<IActionResult> Transfer([FromBody] TransferFromAccountToAccountRequest transferFromAccountToAccountRequest)
+        {
+            var command = new TransferFromAccountToAccount { TransferFromAccountToAccountRequest = transferFromAccountToAccountRequest };
+            var result=await _mediator.Send(command);
+            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
+        }
+
+        [HttpGet("GenerateAccountNumber")]
+        public async Task<IActionResult> GenerateAccountNumber()
         {
             var command = new GenerateAccountNumber();
             var result= await _mediator.Send(command);

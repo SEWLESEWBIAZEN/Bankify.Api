@@ -30,7 +30,6 @@
   <ItemGroup>
     <Folder Include="Controllers\V1.0\Loan\" />
     <Folder Include="Controllers\V1.0\Card\" />
-    <Folder Include="Controllers\V1.0\Transactions\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
 

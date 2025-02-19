@@ -32,7 +32,8 @@ namespace Bankify.Application.Features.Queries.Actionlogs
                     result.AddError(ErrorCode.NetworkError, "Network Error (Unable to reach database)");
                     return result;
                 }
-                var actionLogs = await _actionLogs.WhereAsync(al => al.Id != 0);
+                var unorderedActionLogs = await _actionLogs.WhereAsync(al => al.Id != 0);
+                var actionLogs=new List<ActionLog>( unorderedActionLogs.OrderByDescending(ual=> ual.ActionTakenOn));
                 if (actionLogs.Count==0) 
                 {
                     result.AddError(ErrorCode.NotFound, "No Record");

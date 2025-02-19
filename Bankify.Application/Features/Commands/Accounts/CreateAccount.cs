@@ -51,7 +51,7 @@ namespace Bankify.Application.Features.Commands.Accounts
                 }
                 //generate account number from the db
                 var baseUrl = _configuration["SftpSettings:BaseUrl"];
-                var requestUrl = $"{baseUrl}/api/v1/Accounts/GenerateAcountNumber";
+                var requestUrl = $"{baseUrl}/api/v1/Accounts/GenerateAccountNumber";
                 var response = await _httpClient.GetAsync(requestUrl);
                 response.EnsureSuccessStatusCode();
                 var payload = await response.Content.ReadFromJsonAsync<GenerateAccountNumberResponse>();
