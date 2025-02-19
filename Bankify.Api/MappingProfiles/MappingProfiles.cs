@@ -5,6 +5,7 @@ using Bankify.Application.Common.DTOs.AccountTypes.Response;
 using Bankify.Application.Common.DTOs.ActionLogs.Response;
 using Bankify.Application.Common.DTOs.Transactions.Response;
 using Bankify.Application.Common.DTOs.TransactionTypes.Response;
+using Bankify.Application.Common.DTOs.Transfers.Response;
 using Bankify.Application.Common.DTOs.Users.Response;
 using Bankify.Domain.Models;
 using Bankify.Domain.Models.Accounts;
@@ -30,6 +31,9 @@ namespace Bankify.Api.MappingProfiles
             //transactions
             CreateMap<ATransaction, TransactionDetail>();
             CreateMap<TransactionType, TransactionTypeDetail>();
+
+            //transfers
+            CreateMap<Transfer, TransferDetail>();
         }      
        
 

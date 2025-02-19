@@ -1,5 +1,6 @@
 ﻿using Bankify.Application.Common.DTOs.Accounts.Request;
 using Bankify.Application.Common.DTOs.Accounts.Response;
+using Bankify.Application.Common.DTOs.Transfers.Response;
 using Bankify.Application.Features.Commands.Accounts;
 using Bankify.Application.Features.Queries.Accounts;
 using Bankify.Domain.Models.Shared;
@@ -22,6 +23,14 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
         public async Task<IActionResult> GetById(int id)
         {
             var query = new GetAccountById { Id = id };
+            var result = await _mediator.Send(query);
+            var account = _mapper.Map<AccountDetail>(result.Payload);
+            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(account);
+        }
+        [HttpGet("GetByAccountNumber")]
+        public async Task<IActionResult> GetByAccountNumber(string accountNumber)
+        {
+            var query = new GetAccountByAccountNumber { AccountNumber = accountNumber };
             var result = await _mediator.Send(query);
             var account = _mapper.Map<AccountDetail>(result.Payload);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(account);
@@ -64,7 +73,8 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
         {
             var command = new TransferFromAccountToAccount { TransferFromAccountToAccountRequest = transferFromAccountToAccountRequest };
             var result=await _mediator.Send(command);
-            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
+            var transferDetail = _mapper.Map<TransferDetail>(result.Payload);
+            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transferDetail);
         }
 
         [HttpGet("GenerateAccountNumber")]

@@ -88,7 +88,7 @@ namespace Bankify.Application.Features.Commands.Accounts
                 var accountToBeDebitedBalanceBefore = accountToBeDebited.Balance;
 
                 //update balances
-                accountToBeDebited.Balance=accountToBeCredited.Balance- request.AmmountTransfered;
+                accountToBeDebited.Balance=accountToBeDebited.Balance- request.AmmountTransfered;
                 accountToBeCredited.Balance = accountToBeCredited.Balance + request.AmmountTransfered;
 
                 //update audit
@@ -131,7 +131,7 @@ namespace Bankify.Application.Features.Commands.Accounts
                     var newTransfer = new Transfer
                     {
                         TransferedFromId=accountToBeDebited.Id,
-                        TransferredToId=accountToBeDebited.Id,
+                        TransferredToId=accountToBeCredited.Id,
                         AmmountTransfered=request.AmmountTransfered,
                         TransferStatus=TransactionStatus.Completed,
                         TransferedOn=DateTime.Now
