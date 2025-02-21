@@ -2,12 +2,14 @@
 using Bankify.Application.Features.Commands.User;
 using Bankify.Application.Features.Queries.Users;
 using Bankify.Domain.Models.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bankify.Api.Controllers.V1._0.Users
 {
     public class UsersController : BaseController
     {
+        [Authorize]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(RecordStatus? recordStatus)
         {
@@ -15,6 +17,9 @@ namespace Bankify.Api.Controllers.V1._0.Users
             var result = await _mediator.Send(query);
             return result.IsError? HandleErrorResponse(result.Errors) : Ok(result.Payload);
         }
+
+        //[Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)
         {

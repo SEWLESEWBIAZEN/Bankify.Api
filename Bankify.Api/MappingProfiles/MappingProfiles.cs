@@ -34,6 +34,11 @@ namespace Bankify.Api.MappingProfiles
 
             //transfers
             CreateMap<Transfer, TransferDetail>();
+
+            //Authorization
+            CreateMap<AppRole, AppRoleDetail>();
+            CreateMap<AppClaim, AppClaimDetail>();
+          //  CreateMap<RoleClaim, RoleClaimDetail>();
         }      
        
 

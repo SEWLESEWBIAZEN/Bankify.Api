@@ -10,10 +10,12 @@ namespace Bankify.Api.Registrars
 {
     public class MvcRegistrar : IWebApplicationBuilderRegistrar
     {
+        
        
         public void RegisterServices(WebApplicationBuilder builder)
         {
             var _configuration = builder.Configuration;
+           
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -82,7 +84,7 @@ namespace Bankify.Api.Registrars
                                                           .AllowAnyOrigin();
                                   });
             });
-
+            builder.Services.AddAuthorization();
             builder.Services.BuildServiceProvider();
             builder.Services.AddEndpointsApiExplorer();
             // builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));

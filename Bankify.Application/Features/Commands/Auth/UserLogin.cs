@@ -83,7 +83,9 @@ namespace Bankify.Application.Features.Commands.Auth
             {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.FirstName +" " +user.LastName),
-                    new Claim(ClaimTypes.Email, user.Email)
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, "Admin")
+
 
             };
             var token = new JwtSecurityToken
@@ -91,7 +93,7 @@ namespace Bankify.Application.Features.Commands.Auth
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: userClaims,
-                expires: DateTime.Now.AddHours(10),
+                expires: DateTime.UtcNow.AddSeconds(20),
                 signingCredentials: credintials
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);

@@ -4,6 +4,7 @@ using Bankify.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bankify.Infrastructure.Migrations
 {
     [DbContext(typeof(BankifyDbContext))]
-    partial class BankifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250221084310_RoleClaimAppRoleAndUserRole")]
+    partial class RoleClaimAppRoleAndUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,23 +302,6 @@ namespace Bankify.Infrastructure.Migrations
                     b.ToTable("Transfers");
                 });
 
-            modelBuilder.Entity("Bankify.Domain.Models.Users.AppClaim", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimString")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppClaims");
-                });
-
             modelBuilder.Entity("Bankify.Domain.Models.Users.AppRole", b =>
                 {
                     b.Property<int>("Id")
@@ -414,32 +400,14 @@ namespace Bankify.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AppClaimId")
+                    b.Property<int?>("AppRoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("AppRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastUpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RegisteredBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RegisteredDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
+                    b.Property<string>("ClaimString")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppClaimId");
 
                     b.HasIndex("AppRoleId");
 
@@ -545,19 +513,10 @@ namespace Bankify.Infrastructure.Migrations
 
             modelBuilder.Entity("Bankify.Domain.Models.Users.RoleClaim", b =>
                 {
-                    b.HasOne("Bankify.Domain.Models.Users.AppClaim", "AppClaim")
-                        .WithMany("RoleClaims")
-                        .HasForeignKey("AppClaimId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Bankify.Domain.Models.Users.AppRole", "AppRole")
                         .WithMany("RoleClaims")
                         .HasForeignKey("AppRoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AppClaim");
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("AppRole");
                 });
@@ -598,11 +557,6 @@ namespace Bankify.Infrastructure.Migrations
             modelBuilder.Entity("Bankify.Domain.Models.Transactions.TransactionType", b =>
                 {
                     b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("Bankify.Domain.Models.Users.AppClaim", b =>
-                {
-                    b.Navigation("RoleClaims");
                 });
 
             modelBuilder.Entity("Bankify.Domain.Models.Users.AppRole", b =>

@@ -63,9 +63,31 @@ namespace Bankify.Infrastructure.Context
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Transfer>()
                 .Property(t=>t.AmmountTransfered)
-                .HasPrecision(38, 10);       
+                .HasPrecision(38, 10);
+            
+            //Authorization           
 
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.AppRole)
+                .WithMany(ar => ar.UserRoles)
+                .HasForeignKey(fh => fh.AppRoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur=>ur.AppUser)
+                .WithMany(au=>au.UserRoles)
+                .HasForeignKey(fh=>fh.AppUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<RoleClaim>()
+                .HasOne(rc => rc.AppClaim)
+                .WithMany(ac => ac.RoleClaims)
+                .HasForeignKey(fh => fh.AppClaimId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<RoleClaim>()
+                .HasOne(rc => rc.AppRole)
+                .WithMany(ar => ar.RoleClaims)
+                .HasForeignKey(fh => fh.AppRoleId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
 
@@ -86,6 +108,13 @@ namespace Bankify.Infrastructure.Context
         public DbSet<ATransaction> TransactionLogs { get; set; }
         public DbSet<TransactionType> TransactionTypes { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
+        #endregion
+
+        #region Authorization
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<AppRole> AppRoles { get; set; }
+        public DbSet<AppClaim> AppClaims { get; set; }
+        public DbSet<RoleClaim> RoleClaims { get; set; }
         #endregion
     }
 
