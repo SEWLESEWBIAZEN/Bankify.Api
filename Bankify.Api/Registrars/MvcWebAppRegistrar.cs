@@ -32,6 +32,7 @@ namespace Bankify.Api.Registrars
             );
             app.MapGet("/", () => "Bankify - API");
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
             app.MigrateDatabase();

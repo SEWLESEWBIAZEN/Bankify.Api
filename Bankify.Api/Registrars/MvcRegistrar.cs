@@ -1,15 +1,36 @@
 ﻿using Bankify.Api.Filters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Quartz;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Bankify.Api.Registrars
 {
     public class MvcRegistrar : IWebApplicationBuilderRegistrar
     {
+       
         public void RegisterServices(WebApplicationBuilder builder)
         {
+            var _configuration = builder.Configuration;
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidAudience = _configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey
+                (Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!))
+
+            });
             builder.Services.AddMvc(setupAction: options =>
             {
                 options.Filters.Add(typeof(AuthorizationHandler));
@@ -55,10 +76,7 @@ namespace Bankify.Api.Registrars
                                   policy =>
                                   {
                                       policy.WithOrigins("localhost:3000",
-                                                          "svhqiis03:1111",
-                                                          "https://legaloffice.ethiopianairlines.com",
-                                                          "http://localhost:3000",
-                                                          "http://svhqdts01:1180")
+                                                          "http://localhost:3000")
                                                           .AllowAnyHeader()
                                                           .AllowAnyMethod()
                                                           .AllowAnyOrigin();
@@ -67,7 +85,7 @@ namespace Bankify.Api.Registrars
 
             builder.Services.BuildServiceProvider();
             builder.Services.AddEndpointsApiExplorer();
-           // builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
+            // builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
             //builder.Services.Configure<ServicesUrl>(builder.Configuration.GetSection("ServicesUrl"));
         }
     }

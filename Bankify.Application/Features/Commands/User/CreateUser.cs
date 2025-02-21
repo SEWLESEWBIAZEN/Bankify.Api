@@ -61,7 +61,7 @@ namespace Bankify.Application.Features.Commands.User
                 user.FirstName = request.FirstName;
                 user.LastName = request.LastName;
                 user.Email = request.Email;
-                user.Password = request.Password;
+                user.Password =BCrypt.Net.BCrypt.HashPassword( request.Password);
                 user.PhoneNumber = request.PhoneNumber;
                 user.Address = request.Address;
 
