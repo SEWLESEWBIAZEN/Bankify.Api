@@ -1,8 +1,6 @@
 ﻿using Bankify.Application.Common.DTOs.Users.Request.AppRoles;
-using Bankify.Application.Common.DTOs.Users.Response;
 using Bankify.Application.Features.Commands.User.AppRoles;
 using Bankify.Application.Features.Queries.Users.AppRoles;
-using Bankify.Domain.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bankify.Api.Controllers.V1._0.Users
@@ -31,7 +29,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
         public async Task<IActionResult> GrantPrivilege([FromBody] GrantPrivilegeRequest grantPrivilegeRequest)
         {
             var command = new GrantPrivilege { GrantPrivilegeRequest = grantPrivilegeRequest };
-            var result = await _mediator.Send(command);          
+            var result = await _mediator.Send(command);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result.Payload);
 
         }
