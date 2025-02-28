@@ -38,7 +38,9 @@ namespace Bankify.Api.MappingProfiles
             //Authorization
             CreateMap<AppRole, AppRoleDetail>();
             CreateMap<AppClaim, AppClaimDetail>();
-          //  CreateMap<RoleClaim, RoleClaimDetail>();
+            CreateMap<RoleClaim, RoleClaimDetail>();          
+            CreateMap<UserRole, UserRoleDetail>();
+            
         }      
        
 

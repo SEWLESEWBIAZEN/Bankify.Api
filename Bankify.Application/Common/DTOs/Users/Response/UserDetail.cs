@@ -1,4 +1,7 @@
-﻿namespace Bankify.Application.Common.DTOs.Users.Response
+﻿using Bankify.Domain.Models.Accounts;
+using Bankify.Domain.Models.Users;
+
+namespace Bankify.Application.Common.DTOs.Users.Response
 {
     public class UserDetail
     {
@@ -9,5 +12,7 @@
         public string Password { get; set; }
         public string PhoneNumber { get; set; }
         public string? Address { get; set; }
+        public ICollection<UserRoleDetail> UserRoles { get; set; }
+        //public IEnumerable<Account> Accounts { get; set; }
     }
 }

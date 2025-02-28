@@ -13,8 +13,7 @@ namespace Bankify.Domain.Models.Transactions
         public decimal BalanceBeforeTransaction { get; set; }
         public decimal BalanceAfterTransaction { get; set; }
         public int AccountId { get; set; }
-        public Account Account { get; set; }
-        
+        public Account Account { get; set; }        
         public TransactionStatus Status {  get; set; }
         public DateTime TransactionDate { get; set; }
        

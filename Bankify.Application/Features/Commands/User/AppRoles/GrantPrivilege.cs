@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace Bankify.Application.Features.Commands.User.AppRoles
 {
-    public class GrantPrivilege:IRequest<OperationalResult<RoleClaimDetail>>
+    public class GrantPrivilege:IRequest<OperationalResult<RoleClaimDetails>>
     {
         public GrantPrivilegeRequest GrantPrivilegeRequest { get; set; }
     }
 
-   internal class GrantPrivilegeCommandHandler:IRequestHandler<GrantPrivilege, OperationalResult<RoleClaimDetail>>
+   internal class GrantPrivilegeCommandHandler:IRequestHandler<GrantPrivilege, OperationalResult<RoleClaimDetails>>
     {
         private readonly IRepositoryBase<RoleClaim> _roleClaims;
         private readonly IRepositoryBase<AppRole> _appRoles;
@@ -36,9 +36,9 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
             _appClaims = appClaims;
         }
 
-        public async Task<OperationalResult<RoleClaimDetail>>  Handle(GrantPrivilege command, CancellationToken cancellationToken)
+        public async Task<OperationalResult<RoleClaimDetails>>  Handle(GrantPrivilege command, CancellationToken cancellationToken)
         {
-            var result=new OperationalResult<RoleClaimDetail>();
+            var result=new OperationalResult<RoleClaimDetails>();
             var request = command.GrantPrivilegeRequest;
             var sessionUser = session.GetString("user");
 
@@ -89,7 +89,7 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
                 {
                     result.Message = "Adding Claims to a Role Failed";
                 }
-                var newRoleClaimsDetail = new RoleClaimDetail { AppRoleId = request.AppRoleId, AppClaims = newAppClaimsDetail };
+                var newRoleClaimsDetail = new RoleClaimDetails { AppRoleId = request.AppRoleId, AppClaims = newAppClaimsDetail };
                 result.Payload= newRoleClaimsDetail;
 
             }

@@ -1,4 +1,5 @@
 ﻿using Bankify.Application.Common.DTOs.Users.Request;
+using Bankify.Application.Common.DTOs.Users.Response;
 using Bankify.Application.Features.Commands.User;
 using Bankify.Application.Features.Queries.Users;
 using Bankify.Domain.Models.Shared;
@@ -9,13 +10,14 @@ namespace Bankify.Api.Controllers.V1._0.Users
 {
     public class UsersController : BaseController
     {
-        [Authorize]
+        //[Authorize]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(RecordStatus? recordStatus)
         {
             var query = new GetAllUsers { RecordStatus = recordStatus };
             var result = await _mediator.Send(query);
-            return result.IsError? HandleErrorResponse(result.Errors) : Ok(result.Payload);
+            var usersList=_mapper.Map<List<UserDetail>>(result.Payload);
+            return result.IsError? HandleErrorResponse(result.Errors) : Ok(usersList);
         }
 
         //[Authorize]
@@ -25,7 +27,16 @@ namespace Bankify.Api.Controllers.V1._0.Users
         {
             var query = new GetUserById { Id = id };
             var result = await _mediator.Send(query);
-            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result.Payload);
+            var userDetail = _mapper.Map<UserDetail>(result.Payload);
+            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(userDetail);
+        }
+
+        [HttpPost("AddRoleToUser")]
+        public async Task<IActionResult> AddRoleToUser(int userId, int roleId)
+        {
+            var command = new AddRoleToUser { UserId = userId, RoleId = roleId };
+            var result = await _mediator.Send(command);
+            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
         [HttpPost("Create")]

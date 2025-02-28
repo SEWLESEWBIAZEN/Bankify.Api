@@ -34,9 +34,9 @@ namespace Bankify.Application.Features.Queries.Users
                 }
                 var registeredUsers = request.RecordStatus switch
                 {
-                    RecordStatus.Active=> await _users.Where(u => u.RecordStatus==RecordStatus.Active).ToListAsync(),
-                    RecordStatus.InActive=>await _users.Where(u=>u.RecordStatus==RecordStatus.InActive).ToListAsync(),
-                    _=>await _users.Where(u => u.RecordStatus == RecordStatus.Active).ToListAsync()
+                    RecordStatus.Active=> await _users.Where(u => u.RecordStatus==RecordStatus.Active, "UserRoles.AppRole.RoleClaims.AppClaim", "Accounts.AccountType").ToListAsync(),
+                    RecordStatus.InActive=>await _users.Where(u=>u.RecordStatus==RecordStatus.InActive,"UserRoles.AppRole.RoleClaims.AppClaim","Accounts.AccountType").ToListAsync(),
+                    _=>await _users.Where(u => u.RecordStatus == RecordStatus.Active,"UserRoles.AppRole.RoleClaims.AppClaim","Accounts.AccountType").ToListAsync()
 
                 };
                 if(registeredUsers.Count==0)
