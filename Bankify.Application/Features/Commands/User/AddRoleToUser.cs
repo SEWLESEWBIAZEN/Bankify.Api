@@ -1,37 +1,42 @@
-﻿using Bankify.Application.Common.Helpers;
+﻿using Bankify.Application.Common.DTOs.Users.Request;
+using Bankify.Application.Common.DTOs.Users.Response;
+using Bankify.Application.Common.Helpers;
 using Bankify.Application.Repository;
 using Bankify.Application.Services;
+using Bankify.Domain.Models.Shared;
 using Bankify.Domain.Models.Users;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace Bankify.Application.Features.Commands.User
 {
-    public class AddRoleToUser:IRequest<OperationalResult<UserRole>>
+    public class AddRoleToUser:IRequest<OperationalResult<UserRolesDetails>>
     {
-        public int UserId { get; set; }
-        public int RoleId { get; set; }
+      public AddRolesToUserRequest AddRolesToUserRequest { get; set; }
     }
 
-    internal class AddRoleToUserHandler : IRequestHandler<AddRoleToUser, OperationalResult<UserRole>>
+    internal class AddRoleToUserHandler : IRequestHandler<AddRoleToUser, OperationalResult<UserRolesDetails>>
     {
         private readonly IRepositoryBase<UserRole> _userRoles;
+        private readonly IRepositoryBase<AppRole> _appRoles;
         private readonly INetworkService _networkService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private ISession session; 
+        private ISession session;
 
-        public AddRoleToUserHandler(IRepositoryBase<UserRole> userRoles, INetworkService networkService, IHttpContextAccessor httpContextAccessor)
+        public AddRoleToUserHandler(IRepositoryBase<UserRole> userRoles, INetworkService networkService, IHttpContextAccessor httpContextAccessor, IRepositoryBase<AppRole> appRoles)
         {
             _userRoles = userRoles;
             _networkService = networkService;
             _httpContextAccessor = httpContextAccessor;
 
-            session= _httpContextAccessor.HttpContext.Session;
+            session = _httpContextAccessor.HttpContext.Session;
+            _appRoles = appRoles;
         }
 
-        public async Task<OperationalResult<UserRole>> Handle(AddRoleToUser request, CancellationToken cancellationToken)
+        public async Task<OperationalResult<UserRolesDetails>> Handle(AddRoleToUser addRolesToUserRequest, CancellationToken cancellationToken)
         {
-            var result = new OperationalResult<UserRole>();
+            var result = new OperationalResult<UserRolesDetails>();
+            var request= addRolesToUserRequest.AddRolesToUserRequest;
             var sessionUser = session.GetString("user");
             try
             {
@@ -41,14 +46,32 @@ namespace Bankify.Application.Features.Commands.User
                     result.AddError(ErrorCode.NetworkError, "Network Error(Unable to reach Database)");
                     return result;
                 }
-                var userRole = new UserRole
+                var appRoleList=new List<AppRoleDetail>();
+                var userRoleList = new List<UserRole>();
+                foreach (var roleId in request.RoleIds)
+                {
+                    if(await _userRoles.ExistWhereAsync(ur=>ur.AppRoleId==roleId && ur.AppUserId == request.UserId))
+                    {
+                    continue; 
+                    }
+                    var userRole = new UserRole
+                    {
+                        AppUserId = request.UserId,
+                        AppRoleId = roleId
+                    };
+                    userRoleList.Add(userRole);                    
+                    userRole.Register(sessionUser);
+                    var appRole = await _appRoles.FirstOrDefaultAsync(ar => ar.Id == roleId);
+                    appRoleList.Add(new AppRoleDetail{ Id=appRole.Id, RoleName=appRole.RoleName, RoleClaims=null});
+
+                }               
+                await _userRoles.AddRangeAsync(userRoleList);
+                var userRolesDetailsResponse = new UserRolesDetails
                 {
                     AppUserId = request.UserId,
-                    AppRoleId = request.RoleId
+                    AppRoles = appRoleList
                 };
-                userRole.Register(sessionUser);
-                await _userRoles.AddAsync(userRole);
-                result.Payload = userRole;
+                result.Payload = userRolesDetailsResponse;
             }
             catch (Exception e)
             {

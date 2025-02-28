@@ -32,9 +32,9 @@ namespace Bankify.Api.Controllers.V1._0.Users
         }
 
         [HttpPost("AddRoleToUser")]
-        public async Task<IActionResult> AddRoleToUser(int userId, int roleId)
+        public async Task<IActionResult> AddRoleToUser([FromBody] AddRolesToUserRequest addRolesToUserRequest)
         {
-            var command = new AddRoleToUser { UserId = userId, RoleId = roleId };
+            var command = new AddRoleToUser { AddRolesToUserRequest=addRolesToUserRequest };
             var result = await _mediator.Send(command);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
