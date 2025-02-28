@@ -10,7 +10,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
 {
     public class UsersController : BaseController
     {
-        //[Authorize]
+        [Authorize(Roles = "Super Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(RecordStatus? recordStatus)
         {
@@ -31,6 +31,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(userDetail);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddRoleToUser")]
         public async Task<IActionResult> AddRoleToUser([FromBody] AddRolesToUserRequest addRolesToUserRequest)
         {
@@ -39,6 +40,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromForm] CreateUserRequest createUserRequest)
         {
@@ -47,6 +49,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromForm] UpdateUserRequest updateUserRequest)
         {
@@ -55,6 +58,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result.Payload);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(int id)
         {

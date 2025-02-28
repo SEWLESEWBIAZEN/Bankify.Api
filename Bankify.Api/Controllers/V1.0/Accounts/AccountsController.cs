@@ -4,12 +4,14 @@ using Bankify.Application.Common.DTOs.Transfers.Response;
 using Bankify.Application.Features.Commands.Accounts;
 using Bankify.Application.Features.Queries.Accounts;
 using Bankify.Domain.Models.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bankify.Api.Controllers.V1._0.Accounts
 {
     public class AccountsController : BaseController
     {
+        [Authorize]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(RecordStatus? recordStatus)
         {
@@ -19,6 +21,7 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError?HandleErrorResponse(result.Errors):Ok(accountList);
         }
 
+        [Authorize]
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -27,6 +30,7 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             var account = _mapper.Map<AccountDetail>(result.Payload);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(account);
         }
+        [Authorize]
         [HttpGet("GetByAccountNumber")]
         public async Task<IActionResult> GetByAccountNumber(string accountNumber)
         {
@@ -36,6 +40,7 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(account);
         }
 
+        [Authorize]
         [HttpGet("GetByUserId")]
         public async Task<IActionResult> GetByUserId(int userId)       
         {
@@ -44,6 +49,8 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             var accountList = _mapper.Map<List<AccountDetail>>(result.Payload);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(accountList);
         }
+
+        [Authorize]
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] CreateAccountRequest createAccountRequest)
         {
@@ -52,6 +59,7 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
+        [Authorize]
         [HttpPut("Deposit")]
         public async Task<IActionResult> Deposit([FromBody] DepositToAccountRequest depositToAccountRequest)
         {
@@ -60,6 +68,7 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
+        [Authorize]
         [HttpPut("Withdraw")]
         public async Task<IActionResult> Withdraw([FromBody] WithdrawFromAccountRequest withdrawFromAccountRequest)
         {
@@ -68,6 +77,7 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
+        [Authorize]
         [HttpPut("Transfer")]
         public async Task<IActionResult> Transfer([FromBody] TransferFromAccountToAccountRequest transferFromAccountToAccountRequest)
         {
@@ -77,6 +87,7 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transferDetail);
         }
 
+        [Authorize]
         [HttpGet("GenerateAccountNumber")]
         public async Task<IActionResult> GenerateAccountNumber()
         {

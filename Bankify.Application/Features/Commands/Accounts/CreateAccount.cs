@@ -81,20 +81,23 @@ namespace Bankify.Application.Features.Commands.Accounts
                     result.AddError(ErrorCode.NotFound, "User does not Exist");
                     return result;
                 }
-                
+
                 //generate account number from the db
                 var baseUrl = _configuration["SftpSettings:BaseUrl"];
                 var requestUrl = $"{baseUrl}/api/v1/Accounts/GenerateAccountNumber";
-                var response = await _httpClient.GetAsync(requestUrl);
+                // Create an HttpRequestMessage
+                var newRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                // Add headers to the request
+                newRequest.Headers.Add("Authorization", _contextAccessor.HttpContext.Request.Headers["Authorization"].ToString());           
+                var response = await _httpClient.SendAsync(newRequest);
                 response.EnsureSuccessStatusCode();
-                var payload = await response.Content.ReadFromJsonAsync<GenerateAccountNumberResponse>();
-
+                var payload = await response.Content.ReadFromJsonAsync<GenerateAccountNumberResponse>(cancellationToken: cancellationToken);
                 var accountExist = await _accounts.ExistWhereAsync(a => a.AccountNumber == payload.AccountNumber && a.UserId == request.UserId);
                 if (accountExist) 
                 {
                     result.AddError(ErrorCode.RecordExists, "Account already Existed");
                     return result;
-                }             
+                }          
 
                 //creating new account object
                 var newAccount = new Account

@@ -1,6 +1,7 @@
 ﻿using Bankify.Application.Common.Helpers;
 using Bankify.Application.Repository;
 using Bankify.Application.Services;
+using Bankify.Domain.Models.Shared;
 using Bankify.Domain.Models.Users;
 using MediatR;
 
@@ -32,7 +33,7 @@ namespace Bankify.Application.Features.Queries.Users.AppRoles
                     result.AddError(ErrorCode.NetworkError, "Network Error (Unable to reach database)");
                     return result;
                 }
-                var AppRoles = await _AppRoles.WhereAsync(rc => rc.Id != 0);
+                var AppRoles = await _AppRoles.WhereAsync(rc => rc.Id != 0 && rc.RecordStatus!=RecordStatus.Deleted,"RoleClaims.AppClaim");
                 if (AppRoles.Count == 0)
                 {
                     result.AddError(ErrorCode.NotFound, "No Role Found");

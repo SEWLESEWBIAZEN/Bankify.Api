@@ -2,10 +2,8 @@
 {
     public class UserRoleDetail
     {
-        public int Id { get; set; }
-        public int AppRoleId { get; set; }
-        public AppRoleDetail AppRole { get; set; }
-        public int AppUserId { get; set; }
+        public int Id { get; set; }       
+        public AppRoleDetail AppRole { get; set; }      
 
     }
 }

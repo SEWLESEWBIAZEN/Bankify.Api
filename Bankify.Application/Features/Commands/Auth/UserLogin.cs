@@ -45,7 +45,7 @@ namespace Bankify.Application.Features.Commands.Auth
                     return result;
                 }
 
-                var user = await _users.FirstOrDefaultAsync(u => u.Email == request.Email && u.RecordStatus != RecordStatus.Deleted);
+                var user = await _users.FirstOrDefaultAsync(u => u.Email == request.Email && u.RecordStatus != RecordStatus.Deleted,"UserRoles.AppRole");
                 if(user is null)
                 {
                     result.AddError(ErrorCode.NotFound, "User doesn't exist");
@@ -76,26 +76,43 @@ namespace Bankify.Application.Features.Commands.Auth
 
         public string GenerateToken(BUser user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-            var credintials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var userClaims = new[]
+            // Validate configuration values
+            if (string.IsNullOrEmpty(_configuration["Jwt:Key"]) ||
+                string.IsNullOrEmpty(_configuration["Jwt:Issuer"]) ||
+                string.IsNullOrEmpty(_configuration["Jwt:Audience"]))
             {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.FirstName +" " +user.LastName),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, "Admin")
+                throw new ArgumentNullException("JWT configuration values are missing.");
+            }
 
+            // Create security key and credentials
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            };
-            var token = new JwtSecurityToken
-                (
+            // Add user claims
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+        new Claim(ClaimTypes.Email, user.Email)
+    };
+
+            // Add roles (if any)
+            if (user.UserRoles != null && user.UserRoles.Any())
+            {
+                var roleClaims = user.UserRoles.Select(ur => new Claim(ClaimTypes.Role, ur.AppRole.RoleName.ToString()));
+                claims.AddRange(roleClaims);
+            }
+
+            // Create token
+            var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                claims: userClaims,
-                expires: DateTime.UtcNow.AddSeconds(20),
-                signingCredentials: credintials
-                );
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(15), // Increased expiration time
+                signingCredentials: credentials
+            );
+
+            // Serialize token
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

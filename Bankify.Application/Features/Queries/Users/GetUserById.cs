@@ -33,7 +33,7 @@ namespace Bankify.Application.Features.Queries.Users
                     result.AddError(ErrorCode.NetworkError, "Network Error(Unable to reach Database)");
                     return result;
                 }
-                var user = await _users.FirstOrDefaultAsync(u => u.RecordStatus == RecordStatus.Active && u.Id == request.Id);
+                var user = await _users.FirstOrDefaultAsync(u => u.RecordStatus == RecordStatus.Active && u.Id == request.Id, "UserRoles.AppRole.RoleClaims.AppClaim", "Accounts.AccountType");
                 if (user == null)
                 {
                     result.AddError(ErrorCode.NotFound, "User not found");
