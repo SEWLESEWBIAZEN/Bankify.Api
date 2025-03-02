@@ -60,6 +60,7 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
                 else
                 {
                     result.Message = "Create New Role  is Failed";
+                    result.Payload = newRole;
                 }
             }
             catch (Exception ex)

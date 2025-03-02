@@ -20,10 +20,11 @@ namespace Bankify.Application.Features.Commands.User
         private readonly IRepositoryBase<UserRole> _userRoles;
         private readonly IRepositoryBase<AppRole> _appRoles;
         private readonly INetworkService _networkService;
+        private readonly IActionLoggerService _actionLoggerService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private ISession session;
 
-        public AddRoleToUserHandler(IRepositoryBase<UserRole> userRoles, INetworkService networkService, IHttpContextAccessor httpContextAccessor, IRepositoryBase<AppRole> appRoles)
+        public AddRoleToUserHandler(IRepositoryBase<UserRole> userRoles, INetworkService networkService, IHttpContextAccessor httpContextAccessor, IRepositoryBase<AppRole> appRoles, IActionLoggerService actionLoggerService)
         {
             _userRoles = userRoles;
             _networkService = networkService;
@@ -31,6 +32,7 @@ namespace Bankify.Application.Features.Commands.User
 
             session = _httpContextAccessor.HttpContext.Session;
             _appRoles = appRoles;
+            _actionLoggerService = actionLoggerService;
         }
 
         public async Task<OperationalResult<UserRolesDetails>> Handle(AddRoleToUser addRolesToUserRequest, CancellationToken cancellationToken)
@@ -46,14 +48,17 @@ namespace Bankify.Application.Features.Commands.User
                     result.AddError(ErrorCode.NetworkError, "Network Error(Unable to reach Database)");
                     return result;
                 }
+                var roleNames=new List<string>();
                 var appRoleList=new List<AppRoleDetail>();
                 var userRoleList = new List<UserRole>();
                 foreach (var roleId in request.RoleIds)
                 {
+                    
                     if(await _userRoles.ExistWhereAsync(ur=>ur.AppRoleId==roleId && ur.AppUserId == request.UserId))
                     {
                     continue; 
                     }
+                    
                     var userRole = new UserRole
                     {
                         AppUserId = request.UserId,
@@ -62,10 +67,14 @@ namespace Bankify.Application.Features.Commands.User
                     userRoleList.Add(userRole);                    
                     userRole.Register(sessionUser);
                     var appRole = await _appRoles.FirstOrDefaultAsync(ar => ar.Id == roleId);
+                    roleNames.Add(appRole.RoleName);
+                   
                     appRoleList.Add(new AppRoleDetail{ Id=appRole.Id, RoleName=appRole.RoleName, RoleClaims=null});
 
                 }               
                 await _userRoles.AddRangeAsync(userRoleList);
+                await _actionLoggerService.TakeActionLog(ActionType.Grant, "User",
+                       request.UserId, sessionUser, $"{roleNames.ToString()} has been added to user with Id {request.UserId}");
                 var userRolesDetailsResponse = new UserRolesDetails
                 {
                     AppUserId = request.UserId,

@@ -26,6 +26,7 @@ namespace Bankify.Domain.Models.Shared
         Assign=5,
         Deposit=6,
         Withdraw=7,
+        Grant=8,
         Other=9,
     }
     public enum TransactionStatus
