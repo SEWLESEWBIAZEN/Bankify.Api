@@ -93,7 +93,7 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
                 {
                     //take an action log for audit
                     await _actionLoggerService.TakeActionLog(ActionType.Grant,
-                        "Role", role.Id, sessionUser, $"{claimNames.ToString()} has been added to role {role.RoleName}");
+                        "Role", role.Id, sessionUser, $"{String.Join(",", claimNames)} has been added to role {role.RoleName}");
 
                     result.Message = "Claims Are added to a Role";
                 }

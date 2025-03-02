@@ -74,7 +74,7 @@ namespace Bankify.Application.Features.Commands.User
                 }               
                 await _userRoles.AddRangeAsync(userRoleList);
                 await _actionLoggerService.TakeActionLog(ActionType.Grant, "User",
-                       request.UserId, sessionUser, $"{roleNames.ToString()} has been added to user with Id {request.UserId}");
+                       request.UserId, sessionUser, $"{String.Join(",", roleNames)} has been added to user with Id {request.UserId}");
                 var userRolesDetailsResponse = new UserRolesDetails
                 {
                     AppUserId = request.UserId,
