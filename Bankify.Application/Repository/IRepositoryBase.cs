@@ -24,6 +24,7 @@ namespace Bankify.Application.Repository
         TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate, params string[] path);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, params string[] path);
         bool Remove(TEntity entity);
+        Task<bool> RemoveAsync(TEntity entity);
         bool Update(TEntity entity);
         Task<bool> UpdateAsync(TEntity entity);
         Task<bool> UpdateRangeAsync(IEnumerable<TEntity> entities);

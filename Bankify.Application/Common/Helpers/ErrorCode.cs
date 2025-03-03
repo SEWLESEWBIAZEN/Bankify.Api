@@ -6,6 +6,7 @@
         NotFound = 404,
         ServerError = 500,
         RecordFound = 409,
+        NetworkError=503,
 
         //Validation errors should be in the range 100 - 199
         ValidationError = 101,

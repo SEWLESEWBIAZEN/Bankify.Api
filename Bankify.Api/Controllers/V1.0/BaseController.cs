@@ -50,26 +50,6 @@ namespace Bankify.Api.Controllers.V1._0
             errors.ForEach(e => apiError.Errors.Add(e.Message));
             return StatusCode(400, apiError);
         }
-        //protected IActionResult HandleTokenErrorResponse(List<Error> errors)
-        //{
-        //    var clientStatus = string.Empty;
-        //    var apiError = new OperationResult<UserTokenValidationResponse>();
-
-        //    if (errors.Any(e => e.Code == ErrorCode.ServerError))
-        //    {
-        //        var error = errors.FirstOrDefault(e => e.Code == ErrorCode.ServerError);
-
-        //        apiError.Message = "Server error";
-        //        apiError.AddError(ErrorCode.ServerError, "Server error");
-        //        return StatusCode(500, apiError);
-        //    }
-        //    clientStatus = errors.Any(x => x.Message == "User is not Authorized to access.") ? "104" : clientStatus;
-        //    clientStatus = errors.Any(x => x.Message == "Id token is invalid.") ? "103" : clientStatus;
-        //    clientStatus = errors.Any(x => x.Message == "Client is not Authorized.") ? "102" : clientStatus;
-        //    clientStatus = errors.Any(x => x.Message == "Client token is invalid.") ? "101" : clientStatus;
-        //    apiError.Message = clientStatus;
-        //    errors.ForEach(e => apiError.AddError(ErrorCode.ServerError, e.Message));
-        //    return StatusCode(401, apiError);
-        //}
+        
     }
 }

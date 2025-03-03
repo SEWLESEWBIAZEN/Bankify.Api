@@ -2,6 +2,7 @@ using Bankify.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 builder.RegisterServices(typeof(Program));
 
