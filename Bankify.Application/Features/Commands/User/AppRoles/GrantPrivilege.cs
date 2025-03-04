@@ -81,7 +81,9 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
                         newRoleClaims.Add(newRoleClaim);
 
                         //add claim to claim names list
-                        claimNames.Add(claim.ClaimString);                       
+                        claimNames.Add(claim.ClaimString); 
+                        
+                        //new object creation
                         var newAppClaimDetail = new AppClaimDetail {Id = claim.Id, ClaimString = claim.ClaimString };
                         newAppClaimsDetail.Add(newAppClaimDetail);                      
 
