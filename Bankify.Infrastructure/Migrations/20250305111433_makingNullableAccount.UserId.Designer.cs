@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bankify.Infrastructure.Migrations
 {
     [DbContext(typeof(BankifyDbContext))]
-    [Migration("20250213132514_TransactionTables")]
-    partial class TransactionTables
+    [Migration("20250305111433_makingNullableAccount.UserId")]
+    partial class makingNullableAccountUserId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,8 @@ namespace Bankify.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(38, 10)
+                        .HasColumnType("decimal(38,10)");
 
                     b.Property<string>("CurrencyCode")
                         .IsRequired()
@@ -64,7 +65,7 @@ namespace Bankify.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -89,7 +90,8 @@ namespace Bankify.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("InterestRate")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime>("LastUpdateDate")
                         .HasColumnType("datetime2");
@@ -162,18 +164,19 @@ namespace Bankify.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastUpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("RecordStatus")
                         .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RegisteredBy")
                         .IsRequired()
@@ -188,23 +191,16 @@ namespace Bankify.Infrastructure.Migrations
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TransactionTypeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("TransactionTypeId");
-
                     b.ToTable("TransactionLogs");
                 });
 
-            modelBuilder.Entity("Bankify.Domain.Models.Transactions.TransactionType", b =>
+            modelBuilder.Entity("Bankify.Domain.Models.Transactions.TransactionEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -212,16 +208,23 @@ namespace Bankify.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BalanceAfterTransaction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BalanceBeforeTransaction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("EntryType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdateDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RecordStatus")
                         .HasColumnType("int");
@@ -233,13 +236,20 @@ namespace Bankify.Infrastructure.Migrations
                     b.Property<DateTime>("RegisteredDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransactionTypes");
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("TransactionEntries");
                 });
 
             modelBuilder.Entity("Bankify.Domain.Models.Transactions.Transfer", b =>
@@ -251,7 +261,8 @@ namespace Bankify.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AmmountTransfered")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(38, 10)
+                        .HasColumnType("decimal(38,10)");
 
                     b.Property<DateTime>("LastUpdateDate")
                         .HasColumnType("datetime2");
@@ -289,6 +300,57 @@ namespace Bankify.Infrastructure.Migrations
                     b.HasIndex("TransferredToId");
 
                     b.ToTable("Transfers");
+                });
+
+            modelBuilder.Entity("Bankify.Domain.Models.Users.AppClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimString")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppClaims");
+                });
+
+            modelBuilder.Entity("Bankify.Domain.Models.Users.AppRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LastUpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RegisteredBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegisteredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppRoles");
                 });
 
             modelBuilder.Entity("Bankify.Domain.Models.Users.BUser", b =>
@@ -347,6 +409,86 @@ namespace Bankify.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Bankify.Domain.Models.Users.RoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppClaimId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AppRoleId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RegisteredBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegisteredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppClaimId");
+
+                    b.HasIndex("AppRoleId");
+
+                    b.ToTable("RoleClaims");
+                });
+
+            modelBuilder.Entity("Bankify.Domain.Models.Users.UserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppRoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RegisteredBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegisteredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppRoleId");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("UserRoles");
+                });
+
             modelBuilder.Entity("Bankify.Domain.Models.Accounts.Account", b =>
                 {
                     b.HasOne("Bankify.Domain.Models.Accounts.AccountType", "AccountType")
@@ -358,31 +500,30 @@ namespace Bankify.Infrastructure.Migrations
                     b.HasOne("Bankify.Domain.Models.Users.BUser", "User")
                         .WithMany("Accounts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AccountType");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Bankify.Domain.Models.Transactions.ATransaction", b =>
+            modelBuilder.Entity("Bankify.Domain.Models.Transactions.TransactionEntry", b =>
                 {
                     b.HasOne("Bankify.Domain.Models.Accounts.Account", "Account")
-                        .WithMany("Transactions")
+                        .WithMany("TransactionEntries")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bankify.Domain.Models.Transactions.TransactionType", "TransactionType")
-                        .WithMany("Transactions")
-                        .HasForeignKey("TransactionTypeId")
+                    b.HasOne("Bankify.Domain.Models.Transactions.ATransaction", "Transaction")
+                        .WithMany("TransactionEntries")
+                        .HasForeignKey("TransactionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
 
-                    b.Navigation("TransactionType");
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Bankify.Domain.Models.Transactions.Transfer", b =>
@@ -404,9 +545,47 @@ namespace Bankify.Infrastructure.Migrations
                     b.Navigation("TransferedTo");
                 });
 
+            modelBuilder.Entity("Bankify.Domain.Models.Users.RoleClaim", b =>
+                {
+                    b.HasOne("Bankify.Domain.Models.Users.AppClaim", "AppClaim")
+                        .WithMany("RoleClaims")
+                        .HasForeignKey("AppClaimId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Bankify.Domain.Models.Users.AppRole", "AppRole")
+                        .WithMany("RoleClaims")
+                        .HasForeignKey("AppRoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppClaim");
+
+                    b.Navigation("AppRole");
+                });
+
+            modelBuilder.Entity("Bankify.Domain.Models.Users.UserRole", b =>
+                {
+                    b.HasOne("Bankify.Domain.Models.Users.AppRole", "AppRole")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("AppRoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Bankify.Domain.Models.Users.BUser", "AppUser")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppRole");
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("Bankify.Domain.Models.Accounts.Account", b =>
                 {
-                    b.Navigation("Transactions");
+                    b.Navigation("TransactionEntries");
 
                     b.Navigation("TransfersFrom");
 
@@ -418,14 +597,28 @@ namespace Bankify.Infrastructure.Migrations
                     b.Navigation("Accounts");
                 });
 
-            modelBuilder.Entity("Bankify.Domain.Models.Transactions.TransactionType", b =>
+            modelBuilder.Entity("Bankify.Domain.Models.Transactions.ATransaction", b =>
                 {
-                    b.Navigation("Transactions");
+                    b.Navigation("TransactionEntries");
+                });
+
+            modelBuilder.Entity("Bankify.Domain.Models.Users.AppClaim", b =>
+                {
+                    b.Navigation("RoleClaims");
+                });
+
+            modelBuilder.Entity("Bankify.Domain.Models.Users.AppRole", b =>
+                {
+                    b.Navigation("RoleClaims");
+
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("Bankify.Domain.Models.Users.BUser", b =>
                 {
                     b.Navigation("Accounts");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

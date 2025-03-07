@@ -20,7 +20,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError? HandleErrorResponse(result.Errors) : Ok(usersList);
         }
 
-        [Authorize]
+       
         [Authorize(Roles = "Admin")]
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)

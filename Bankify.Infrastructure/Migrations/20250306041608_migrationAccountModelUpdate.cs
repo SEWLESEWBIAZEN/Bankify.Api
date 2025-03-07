@@ -5,7 +5,7 @@
 namespace Bankify.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class authorizationRelatedMigration : Migration
+    public partial class migrationAccountModelUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

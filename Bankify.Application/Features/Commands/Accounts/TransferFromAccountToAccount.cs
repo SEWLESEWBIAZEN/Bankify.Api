@@ -101,11 +101,8 @@ namespace Bankify.Application.Features.Commands.Accounts
                 //register each operation as transaction with type debit and credit
                 var debitTransaction = new ATransaction
                 {
-                    Reason="Transfer",
-                    TransactionTypeId=3,
-                    BalanceBeforeTransaction= accountToBeDebitedBalanceBefore,
-                    BalanceAfterTransaction= accountToBeDebited.Balance,
-                    AccountId = accountToBeDebited.Id,
+                    Description="Transfer",
+                
                     Status = TransactionStatus.Completed,
                     TransactionDate = DateTime.Now
 
@@ -113,11 +110,8 @@ namespace Bankify.Application.Features.Commands.Accounts
                 debitTransaction.Register(sessionUser);
                 var creditTransaction = new ATransaction
                 {
-                    Reason = "Transfer",
-                    TransactionTypeId = 1002,
-                    BalanceBeforeTransaction = accountToBeCreditedBalanceBefore,
-                    BalanceAfterTransaction = accountToBeCredited.Balance,
-                    AccountId = accountToBeCredited.Id,
+                    Description = "Transfer",
+                   
                     Status = TransactionStatus.Completed,
                     TransactionDate = DateTime.Now
                 };

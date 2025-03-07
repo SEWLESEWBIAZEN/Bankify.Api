@@ -33,24 +33,6 @@ namespace Bankify.Infrastructure.Context
                 .Property(tt => tt.InterestRate)
                 .HasPrecision(5, 2);
 
-
-            modelBuilder.Entity<ATransaction>()
-                .HasOne(t=>t.Account)
-                .WithMany(a=>a.Transactions)
-                .HasForeignKey(fh=>fh.AccountId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<ATransaction>()
-                .HasOne(t=>t.TransactionType)
-                .WithMany(a=>a.Transactions)
-                .HasForeignKey(fh=>fh.TransactionTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<ATransaction>()
-              .Property(p => p.BalanceBeforeTransaction)
-              .HasPrecision(38, 10);
-            modelBuilder.Entity<ATransaction>()
-              .Property(p => p.BalanceAfterTransaction)
-              .HasPrecision(38, 10);            
-
             modelBuilder.Entity<Transfer>()
                 .HasOne(t => t.TransferedFrom)
                 .WithMany(a => a.TransfersFrom)
@@ -64,6 +46,18 @@ namespace Bankify.Infrastructure.Context
             modelBuilder.Entity<Transfer>()
                 .Property(t=>t.AmmountTransfered)
                 .HasPrecision(38, 10);
+
+            //transaction entries
+            modelBuilder.Entity<TransactionEntry>()
+                .HasOne(t => t.Transaction)
+                .WithMany(tr=>tr.TransactionEntries)
+                .HasForeignKey(fh => fh.TransactionId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<TransactionEntry>()
+                .HasOne(t => t.Account)
+                .WithMany(tr=>tr.TransactionEntries)
+                .HasForeignKey(fh => fh.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
             
             //Authorization           
 
@@ -105,9 +99,9 @@ namespace Bankify.Infrastructure.Context
         #endregion
 
         #region Transactions
-        public DbSet<ATransaction> TransactionLogs { get; set; }
-        public DbSet<TransactionType> TransactionTypes { get; set; }
+        public DbSet<ATransaction> TransactionLogs { get; set; }       
         public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<TransactionEntry> TransactionEntries { get; set; }
         #endregion
 
         #region Authorization

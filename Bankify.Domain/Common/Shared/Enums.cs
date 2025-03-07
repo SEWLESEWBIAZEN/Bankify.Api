@@ -33,12 +33,21 @@ namespace Bankify.Domain.Models.Shared
     {
         Failed = -1,
         Pending=0,
-        Completed =1       
+        Completed =1    
 
+    }    
+    public enum EntryType
+    {
+        Debit=0,
+        Credit=1
     }
-  
-    
-   
+
+    public enum TransactionType
+    {
+        Deposit=1,
+        Withdrawal=2,
+        Transfer=3
+    }
    
   
 }

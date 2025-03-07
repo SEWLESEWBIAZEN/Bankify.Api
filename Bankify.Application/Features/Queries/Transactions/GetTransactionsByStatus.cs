@@ -35,7 +35,7 @@ namespace Bankify.Application.Features.Queries.Transactions
                     return result;
                 }
               
-                var allTransactions = await _transactions.WhereAsync(t => t.RecordStatus != RecordStatus.Deleted && t.Status ==request.TransactionStatus,"Account", "TransactionType");
+                var allTransactions = await _transactions.WhereAsync(t => t.RecordStatus != RecordStatus.Deleted && t.Status ==request.TransactionStatus,"TransactionEntries");
                 if (allTransactions.Count == 0)
                 {
                     result.AddError(ErrorCode.NotFound, $" No {request.TransactionStatus.ToString()} Transaction Found");

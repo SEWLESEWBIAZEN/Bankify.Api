@@ -33,7 +33,7 @@ namespace Bankify.Application.Features.Queries.Transactions
                     result.AddError(ErrorCode.NetworkError, "Network Error (unable to reach Database)");
                     return result;
                 }
-                var transaction=await _transactions.FirstOrDefaultAsync(t=>t.Id == query.Id,  "Account", "TransactionType");
+                var transaction=await _transactions.FirstOrDefaultAsync(t=>t.Id == query.Id, "TransactionEntries");
                 if(transaction is null)
                 {
                     result.AddError(ErrorCode.NotFound, "Transaction is Not Found");

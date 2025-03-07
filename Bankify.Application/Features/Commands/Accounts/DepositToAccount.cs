@@ -7,109 +7,121 @@ using Bankify.Domain.Models.Shared;
 using Bankify.Domain.Models.Transactions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Bankify.Application.Features.Commands.Accounts
 {
-    public class DepositToAccount:IRequest<OperationalResult<ATransaction>>
+    public class DepositToAccount : IRequest<OperationalResult<ATransaction>>
     {
         public DepositToAccountRequest DepositToAccountRequest { get; set; }
     }
 
-    internal class DepositToAccountCommandhandler:IRequestHandler<DepositToAccount, OperationalResult<ATransaction>>
+    internal class DepositToAccountCommandHandler : IRequestHandler<DepositToAccount, OperationalResult<ATransaction>>
     {
         private readonly IRepositoryBase<Account> _accounts;
         private readonly IRepositoryBase<ATransaction> _transactions;
-        private readonly IRepositoryBase<TransactionType> _transactionTypes;
+        private readonly IRepositoryBase<TransactionEntry> _transactionEntries;
+        private readonly IRegisterTransactionEntriesService _registerTransactionEntriesService;
         private readonly INetworkService _networkService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IActionLoggerService _actionLoggerService;
-        
-        private ISession session;
+        private readonly ILogger<DepositToAccountCommandHandler> _logger;
 
-        public DepositToAccountCommandhandler(IRepositoryBase<Account> accounts, IRepositoryBase<ATransaction> transactions, INetworkService networkService, IHttpContextAccessor contextAccessor, IActionLoggerService actionLoggerService, IRepositoryBase<TransactionType> transactionTypes)
+        public DepositToAccountCommandHandler(
+            IRepositoryBase<Account> accounts,
+            IRepositoryBase<ATransaction> transactions,
+            IRepositoryBase<TransactionEntry> transactionEntries,
+            INetworkService networkService,
+            IHttpContextAccessor contextAccessor,
+            IActionLoggerService actionLoggerService,
+            ILogger<DepositToAccountCommandHandler> logger,
+            IRegisterTransactionEntriesService registerTransactionEntriesService)
         {
             _accounts = accounts;
             _transactions = transactions;
+            _transactionEntries = transactionEntries;
             _networkService = networkService;
             _contextAccessor = contextAccessor;
-
-            session = _contextAccessor.HttpContext.Session;
             _actionLoggerService = actionLoggerService;
-            _transactionTypes = transactionTypes;
+            _logger = logger;
+            _registerTransactionEntriesService = registerTransactionEntriesService;
         }
 
-        public async Task<OperationalResult<ATransaction>> Handle(DepositToAccount depositToAccountrequest, CancellationToken cancellationToken)
+        public async Task<OperationalResult<ATransaction>> Handle(DepositToAccount request, CancellationToken cancellationToken)
         {
-            var sessionUser = session.GetString("user");
-            var result=new OperationalResult<ATransaction>();
-            var request = depositToAccountrequest.DepositToAccountRequest;
-            try 
+            var result = new OperationalResult<ATransaction>();
+            var sessionUser = _contextAccessor.HttpContext.Session.GetString("user");
+
+            using (var transaction = await _accounts.BeginTransactionAsync())
             {
-                var dbReachable = await _networkService.IsConnected();
-                if (!dbReachable)
-                {
-                    result.AddError(ErrorCode.NetworkError, "Network Error(Database is not reachable");
-                    return result;
-                }
-                if(request.AccountNumber==null || request.Ammount == 0 || request.Ammount==null)
-                {
-                    result.AddError(ErrorCode.ValidationError, "InComplete Request! ");
-                    return result;
 
-                }
-                var accountToBeCredited = await _accounts.FirstOrDefaultAsync(ac => ac.AccountNumber == request.AccountNumber && ac.RecordStatus == RecordStatus.Active);
-                if (accountToBeCredited == null)
+                try
                 {
-                    result.AddError(ErrorCode.NotFound, "Account doesn't exist or not active");
-                    return result;
-                }
-                var previousBalance= accountToBeCredited.Balance;
-                accountToBeCredited.Balance = accountToBeCredited.Balance+ request.Ammount;
-                await _accounts.UpdateAsync(accountToBeCredited);
-                await _actionLoggerService.TakeActionLog(ActionType.Deposit, "Account", accountToBeCredited.Id, sessionUser, $"Account with AccNo: '{accountToBeCredited.AccountNumber}' was credited '{accountToBeCredited.CurrencyCode}{request.Ammount} at {DateTime.Now} by '{sessionUser}' ");
+                    // Validate network connectivity
+                    if (!await _networkService.IsConnected())
+                    {
+                        result.AddError(ErrorCode.NetworkError, "Network Error: Database is not reachable.");
+                        return result;
+                    }
 
-                var newTransaction = new ATransaction
-                {
-                    Reason="Saving",
-                    TransactionTypeId=1,
-                    BalanceBeforeTransaction = previousBalance,
-                    BalanceAfterTransaction = accountToBeCredited.Balance,
-                    AccountId =accountToBeCredited.Id,                   
-                    Status =TransactionStatus.Pending,
-                    TransactionDate=DateTime.Now
-                };
-                newTransaction.Register(sessionUser);
-                var transactionSuccess = await _transactions.AddAsync(newTransaction);
-                var transactionType = await _transactionTypes.FirstOrDefaultAsync(tt => tt.Id == newTransaction.TransactionTypeId);
-                await _actionLoggerService.TakeActionLog(ActionType.Create, "Transaction", newTransaction.Id, sessionUser, $"New Transaction was Created at {newTransaction.TransactionDate} with type of '{transactionType.Name}' and status of '{newTransaction.Status}'");
-                var transactionStatusTobeUpdated = await _transactions.FirstOrDefaultAsync(t => t.Id == newTransaction.Id);
-                if (transactionSuccess)
-                {
-                    transactionStatusTobeUpdated.Status = TransactionStatus.Completed;
-                    await _actionLoggerService.TakeActionLog(ActionType.ChangeStatus, "Transaction", transactionStatusTobeUpdated.Id, "System Auto", $"Transaction with Id: '{transactionStatusTobeUpdated.Id}' was 'completed'  at {DateTime.Now}");
+                    // Validate request
+                    if (request.DepositToAccountRequest == null || request.DepositToAccountRequest.Ammount <= 0 || string.IsNullOrEmpty(request.DepositToAccountRequest.AccountNumber))
+                    {
+                        result.AddError(ErrorCode.ValidationError, "Invalid request: Account number or amount is missing.");
+                        return result;
+                    }
+
+                    // Fetch the user account
+                    var account = await _accounts.FirstOrDefaultAsync(ac => ac.AccountNumber == request.DepositToAccountRequest.AccountNumber && ac.RecordStatus == RecordStatus.Active);
+                    //Fetch the liability account
+                    var liabilityAccount = await _accounts.FirstOrDefaultAsync(ac => ac.AccountNumber == "1000000000002" && ac.RecordStatus == RecordStatus.Active);
+                    if (account == null ||account.AccountNumber== "1000000000002" || liabilityAccount==null)
+                    {
+                        result.AddError(ErrorCode.NotFound, "Account not found or inactive.");
+                        return result;
+                    }                                      
+                        // Update account balance
+                        var previousBalance = account.Balance;
+                        account.Balance += request.DepositToAccountRequest.Ammount;
+                        account.UpdateAudit(sessionUser);
+
+                        liabilityAccount.Balance += request.DepositToAccountRequest.Ammount;
+                        liabilityAccount.UpdateAudit(sessionUser);
+                        var transactionSuccess = await _accounts.UpdateRangeAsync([account, liabilityAccount]);                                                         
+                    
+                    // Log the deposit action
+                    await _actionLoggerService.TakeActionLog(
+                        ActionType.Deposit,
+                        "Account",
+                        account.Id,
+                        sessionUser,
+                        $"Account '{account.AccountNumber}' was credited with '{account.CurrencyCode}{request.DepositToAccountRequest.Ammount}' by '{sessionUser}' at {DateTime.Now}.");
+
+                    // Register Transaction Entries
+                    var transactionEntriesRegisterResult = new OperationalResult<TransactionEntry>();
+                    if (transactionSuccess)
+                    {
+                        transactionEntriesRegisterResult = await _registerTransactionEntriesService.RegisterTransactionEntriesAsync([account, liabilityAccount], request.DepositToAccountRequest.Ammount, TransactionType.Deposit);
+                        if (transactionEntriesRegisterResult.IsError)
+                        {
+                            result.AddError(ErrorCode.UnknownError, "Transaction Entries is not registered, please handle it!");
+                            return result;
+                        }
+                    }
+                    //commiting transaction i.e saving changes to database
+                    await transaction.CommitAsync(cancellationToken:cancellationToken);
+                    result.Message = $"Account '{account.AccountNumber}' was credited with 'ETB{request.DepositToAccountRequest.Ammount}' successfully.";
                 }
-                else
+                catch (Exception ex)
                 {
-                    transactionStatusTobeUpdated.Status = TransactionStatus.Failed;
-                    await _actionLoggerService.TakeActionLog(ActionType.ChangeStatus, "Transaction", transactionStatusTobeUpdated.Id, "System Auto", $"Transaction with Id: '{transactionStatusTobeUpdated.Id}' was 'Failed'  at {DateTime.Now}");
+                    //rolling backing transaction i.e unsaving/aborting changes to database
+                    await transaction.RollbackAsync(cancellationToken:cancellationToken);
+                    _logger.LogError(ex, "An error occurred while processing the deposit request.");
+                    result.AddError(ErrorCode.ServerError, ex.Message);
                 }
-                var updateStatusSuccess=await _transactions.UpdateAsync(transactionStatusTobeUpdated);
-
-                if (updateStatusSuccess)
-                {
-                    result.Message = $"Account: {accountToBeCredited.AccountNumber} was  Credited 'ETB{request.Ammount}'  Successfully";
-                }              
-
-
-            }
-            catch(Exception ex) 
-            {
-                result.AddError(ErrorCode.ServerError, ex.Message);
 
             }
             return result;
         }
     }
-
-
 }

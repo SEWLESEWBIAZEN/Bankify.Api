@@ -33,8 +33,8 @@ namespace Bankify.Application.Features.Queries.Transactions
                     result.AddError(ErrorCode.NetworkError, "Network Error(Unable to reach database!");
                     return result;
                 }
-
-                var allTransactions = await _transactions.WhereAsync(t => t.RecordStatus != RecordStatus.Deleted && t.TransactionTypeId==request.TransactionType, "Account", "TransactionType");
+                
+                var allTransactions = await _transactions.WhereAsync(t => t.RecordStatus != RecordStatus.Deleted, "TransactionEntries");
                 if (allTransactions.Count == 0)
                 {
                     result.AddError(ErrorCode.NotFound, "No Transaction Found");

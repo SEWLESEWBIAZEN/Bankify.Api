@@ -13,29 +13,27 @@ namespace Bankify.Api.Controllers.V1._0.Transactions
             var result = await _mediator.Send(query);
             var transactionList = _mapper.Map<List<TransactionDetail>>(result.Payload);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transactionList);
-
         }
 
-        [HttpGet("GetByType")]
-        public async Task<IActionResult> GetByType(int transactionType)
-        {
-            var query = new GetTransactionsByType { TransactionType = transactionType };
-            var result = await _mediator.Send(query);
-            var transactionList = _mapper.Map<List<TransactionDetail>>(result.Payload);
-            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transactionList);
-
-        }
+        //[HttpGet("GetByType")]
+        //public async Task<IActionResult> GetByType(int transactionType)
+        //{
+        //    var query = new GetTransactionsByType { TransactionType = transactionType };
+        //    var result = await _mediator.Send(query);
+        //    var transactionList = _mapper.Map<List<TransactionDetail>>(result.Payload);
+        //    return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transactionList);
+        //}
 
         //by account
-        [HttpGet("GetByAccount")]
-        public async Task<IActionResult> GetByAccount(string accountNumber)
-        {
-            var query = new GetTransactionsByAccount { AccountNumber = accountNumber };
-            var result = await _mediator.Send(query);
-            var transactionList = _mapper.Map<List<TransactionDetail>>(result.Payload);
-            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transactionList);
+        //[HttpGet("GetByAccount")]
+        //public async Task<IActionResult> GetByAccount(string accountNumber)
+        //{
+        //    var query = new GetTransactionsByAccount { AccountNumber = accountNumber };
+        //    var result = await _mediator.Send(query);
+        //    var transactionList = _mapper.Map<List<TransactionDetail>>(result.Payload);
+        //    return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transactionList);
+        //}
 
-        }
         //by id       
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)
@@ -44,7 +42,6 @@ namespace Bankify.Api.Controllers.V1._0.Transactions
             var result = await _mediator.Send(query);
             var transaction= _mapper.Map<TransactionDetail>(result.Payload);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transaction);
-
         }
         //by status
         [HttpGet("GetByStatus")]
@@ -54,8 +51,6 @@ namespace Bankify.Api.Controllers.V1._0.Transactions
             var result = await _mediator.Send(query);
             var transactionList = _mapper.Map<List<TransactionDetail>>(result.Payload);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(transactionList);
-
         }
-
     }
 }

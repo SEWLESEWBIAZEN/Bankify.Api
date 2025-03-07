@@ -3,8 +3,8 @@ using AutoMapper;
 using Bankify.Application.Common.DTOs.Accounts.Response;
 using Bankify.Application.Common.DTOs.AccountTypes.Response;
 using Bankify.Application.Common.DTOs.ActionLogs.Response;
+using Bankify.Application.Common.DTOs.TransactionEntries.Response;
 using Bankify.Application.Common.DTOs.Transactions.Response;
-using Bankify.Application.Common.DTOs.TransactionTypes.Response;
 using Bankify.Application.Common.DTOs.Transfers.Response;
 using Bankify.Application.Common.DTOs.Users.Response;
 using Bankify.Domain.Models;
@@ -29,8 +29,7 @@ namespace Bankify.Api.MappingProfiles
             CreateMap<AccountType,AccountTypeDetail>();
 
             //transactions
-            CreateMap<ATransaction, TransactionDetail>();
-            CreateMap<TransactionType, TransactionTypeDetail>();
+            CreateMap<ATransaction, TransactionDetail>();         
 
             //transfers
             CreateMap<Transfer, TransferDetail>();
@@ -40,6 +39,10 @@ namespace Bankify.Api.MappingProfiles
             CreateMap<AppClaim, AppClaimDetail>();
             CreateMap<RoleClaim, RoleClaimDetail>();          
             CreateMap<UserRole, UserRoleDetail>();
+
+            //transaction entry
+            CreateMap<Account,MinimalAccountDetail>();
+            CreateMap<TransactionEntry, TransactionEntryDetail>();
             
         }      
        

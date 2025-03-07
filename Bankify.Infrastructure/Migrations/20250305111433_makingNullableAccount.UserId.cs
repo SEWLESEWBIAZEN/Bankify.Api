@@ -5,14 +5,14 @@
 namespace Bankify.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class MakingAppRoleIdOptionalInRoleClaimModel : Migration
+    public partial class makingNullableAccountUserId : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
-                name: "AppRoleId",
-                table: "RoleClaim",
+                name: "UserId",
+                table: "Accounts",
                 type: "int",
                 nullable: true,
                 oldClrType: typeof(int),
@@ -23,8 +23,8 @@ namespace Bankify.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
-                name: "AppRoleId",
-                table: "RoleClaim",
+                name: "UserId",
+                table: "Accounts",
                 type: "int",
                 nullable: false,
                 defaultValue: 0,

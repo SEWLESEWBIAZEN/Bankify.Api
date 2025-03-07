@@ -13,7 +13,7 @@ namespace Bankify.Api.Registrars
             builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddHttpContextAccessor();
             //builder.Services.AddScoped<IIdentityService, IdentityService>();
-            //builder.Services.AddScoped<IUserService, UsersService>();
+            builder.Services.AddScoped<IRegisterTransactionEntriesService, RegisterTransactionEntriesService>();
             builder.Services.AddScoped<IHttpService, HttpService>();
             builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
             builder.Services.AddScoped<INetworkService, NetworkService>();

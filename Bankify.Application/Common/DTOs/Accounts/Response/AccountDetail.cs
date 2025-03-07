@@ -13,4 +13,12 @@ namespace Bankify.Application.Common.DTOs.Accounts.Response
         public int UserId { get; set; }
         public UserDetail User { get; set; }
     }
+
+    public class MinimalAccountDetail
+    {
+        public string AccountNumber { get; set; }
+        public decimal Balance { get; set; }
+        public int UserId { get; set; }
+    }
+       
 }

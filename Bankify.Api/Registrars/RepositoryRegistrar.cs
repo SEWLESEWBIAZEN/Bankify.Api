@@ -15,7 +15,7 @@ namespace Bankify.Api.Registrars
             builder.Services.AddScoped(typeof(IRepositoryBase<AccountType>), typeof(RepositoryBase<AccountType>));
             builder.Services.AddScoped(typeof(IRepositoryBase<ActionLog>), typeof(RepositoryBase<ActionLog>));
             builder.Services.AddScoped(typeof(IRepositoryBase<ATransaction>), typeof(RepositoryBase<ATransaction>));
-            builder.Services.AddScoped(typeof(IRepositoryBase<TransactionType>), typeof(RepositoryBase<TransactionType>));
+            builder.Services.AddScoped(typeof(IRepositoryBase<TransactionEntry>), typeof(RepositoryBase<TransactionEntry>));
             builder.Services.AddScoped(typeof(IRepositoryBase<Transfer>), typeof(RepositoryBase<Transfer>));
             builder.Services.AddScoped(typeof(IRepositoryBase<AppClaim>), typeof(RepositoryBase<AppClaim>));
             builder.Services.AddScoped(typeof(IRepositoryBase<AppRole>), typeof(RepositoryBase<AppRole>));
