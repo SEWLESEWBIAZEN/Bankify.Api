@@ -9,9 +9,7 @@ using System.Text.Json.Serialization;
 namespace Bankify.Api.Registrars
 {
     public class MvcRegistrar : IWebApplicationBuilderRegistrar
-    {
-        
-       
+    {              
         public void RegisterServices(WebApplicationBuilder builder)
         {
             var _configuration = builder.Configuration;

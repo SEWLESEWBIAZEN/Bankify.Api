@@ -62,10 +62,13 @@ namespace Bankify.Api.Controllers.V1._0.Accounts
         [Authorize]
         [HttpPut("Deposit")]
         public async Task<IActionResult> Deposit([FromBody] DepositToAccountRequest depositToAccountRequest)
-        {
+        {           
             var command = new DepositToAccount { DepositToAccountRequest = depositToAccountRequest };
             var result = await _mediator.Send(command);
-            return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
+            return result.IsError ? HandleErrorResponse(result.Errors) : 
+                result.Payload is not Stream stream ? BadRequest("Invalid receipt stream.") :
+                File(stream, "application/pdf", "transaction_receipt.pdf");
+                
         }
 
         [Authorize]

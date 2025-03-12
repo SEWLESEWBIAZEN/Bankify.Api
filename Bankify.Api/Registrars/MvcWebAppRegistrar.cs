@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using QuestPDF.Infrastructure;
 
 namespace Bankify.Api.Registrars
 {
@@ -6,6 +7,7 @@ namespace Bankify.Api.Registrars
     {
         public void RegisterPipelineComponents(WebApplication app)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
@@ -29,11 +31,9 @@ namespace Bankify.Api.Registrars
                   {
                       Secure = CookieSecurePolicy.Always
                   }
-            );
-
+            );            
             app.MapGet("/", () => "Bankify - API");
             app.UseHttpsRedirection();
-
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();

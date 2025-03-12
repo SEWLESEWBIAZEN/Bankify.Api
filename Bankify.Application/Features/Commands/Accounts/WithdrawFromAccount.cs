@@ -96,7 +96,7 @@ namespace Bankify.Application.Features.Commands.Accounts
                     await _actionLoggerService.TakeActionLog(ActionType.Withdraw, "Account", accountToBeDebited.Id, sessionUser, $"Account with AccNo: '{accountToBeDebited.AccountNumber}' was debited '{accountToBeDebited.CurrencyCode}{request.Ammount} at {DateTime.Now} by '{sessionUser}' ");
 
                     // Register Transaction Entries
-                    var transactionEntriesRegisterResult = new OperationalResult<TransactionEntry>();
+                    var transactionEntriesRegisterResult = new OperationalResult<List<TransactionEntry>>();
                     if (transactionSuccess)
                     {
                         transactionEntriesRegisterResult = await _transactionEntriesService.RegisterTransactionEntriesAsync([accountToBeDebited, liabilityAccount], request.Ammount, TransactionType.Withdrawal);

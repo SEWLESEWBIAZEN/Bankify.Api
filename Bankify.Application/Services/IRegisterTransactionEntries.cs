@@ -8,7 +8,7 @@ namespace Bankify.Application.Services
 {
     public interface IRegisterTransactionEntriesService
     {
-        Task<OperationalResult<TransactionEntry>> RegisterTransactionEntriesAsync(List<Account> accounts, decimal amount, TransactionType transactionType);
+        Task<OperationalResult<List<TransactionEntry>>> RegisterTransactionEntriesAsync(List<Account> accounts, decimal amount, TransactionType transactionType);
     }
     public class RegisterTransactionEntriesService : IRegisterTransactionEntriesService
     {
@@ -25,13 +25,13 @@ namespace Bankify.Application.Services
             _contextAccessor = contextAccessor;
             session=_contextAccessor.HttpContext.Session;
         }
-        public async Task<OperationalResult<TransactionEntry>> RegisterTransactionEntriesAsync(List<Account> accounts,decimal amount, TransactionType transactionType)
+        public async Task<OperationalResult<List<TransactionEntry>>> RegisterTransactionEntriesAsync(List<Account> accounts,decimal amount, TransactionType transactionType)
         {
             //accounts[0] ---user account
             //accounts[1] ---bank account
             var account = accounts[0];
             var liabilityAccount = accounts[1];
-            var result= new OperationalResult<TransactionEntry>();
+            var result= new OperationalResult<List<TransactionEntry>>();
             var sessionUser = session.GetString("user");
             //using (var dbTransaction = await _transactionEntries.BeginTransactionAsync())
             //{
@@ -86,8 +86,10 @@ namespace Bankify.Application.Services
                             Amount = amount,
                             EntryType = transactionType == TransactionType.Deposit ? EntryType.Debit:EntryType.Credit
                         };
+                    //returning both entries as result payload
+                    result.Payload = [transactionEntry1, transactionEntry2];
 
-                        var entrySuccess = await _transactionEntries.AddRangeAsync([transactionEntry1, transactionEntry2]);
+                    var entrySuccess = await _transactionEntries.AddRangeAsync([transactionEntry1, transactionEntry2]);
                         if (!entrySuccess)
                         {
                             result.AddError(ErrorCode.UnknownError, "Failed to add transaction entry.");
@@ -107,8 +109,8 @@ namespace Bankify.Application.Services
                             "System Auto",
                             $"Transaction '{transaction.Id}' failed at {DateTime.Now}.");
                     }
-                   // await dbTransaction.CommitAsync();
-
+                // await dbTransaction.CommitAsync();
+               
                 }
                 catch (Exception ex)
                 {

@@ -18,7 +18,7 @@ namespace Bankify.Api.Registrars
             builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
             builder.Services.AddScoped<INetworkService, NetworkService>();
             builder.Services.AddScoped<IActionLoggerService, ActionLoggerService>();
-            //builder.Services.AddScoped<IEmailSender, EmailSenderServices>();
+            builder.Services.AddScoped<IPrintRecieptService, PrintRecieptService>();
             builder.Services.AddScoped<IAccountRetrievalService, AccountRetrievalService>();         
             
             builder.Services.AddHttpClient();
