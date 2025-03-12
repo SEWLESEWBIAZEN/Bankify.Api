@@ -23,11 +23,8 @@ namespace Bankify.Application.Services
                 {
                     container.Page(page =>
                     {
-                        page.Size(PageSizes.A6);
-                        page.MarginLeft(5);
-                        page.MarginRight(5);
-                        page.MarginTop(10);
-                        page.MarginBottom(10);
+                        page.Size(PageSizes.A6);                        
+                        page.Margin(10);                      
 
                         page.Header()
                             .Text("Transaction Receipt - Bankify")                            
@@ -39,18 +36,25 @@ namespace Bankify.Application.Services
                             {
                                 col.Item().Text("---------------------------------------").FontFamily(Fonts.LucidaConsole).FontSize(12).AlignCenter();
                                 col.Spacing(8);
+                                col.Item().Text($"Branch: {"Main Branch"}").FontFamily(Fonts.LucidaConsole).FontSize(12);
                                 col.Item().Text($"Transaction Type: {transactionType.ToString()}").FontFamily(Fonts.LucidaConsole).FontSize(12);
                                 col.Item().Text($"Transaction ID: {transactionId}").FontFamily(Fonts.LucidaConsole).FontSize(12);
-                                if (creditAccount.User != null) 
+                                if(transactionType ==TransactionType.Transfer)
+                                {
+                                    col.Item().Text($"Debit Account Holder: {debitAccount.User.FirstName} {debitAccount.User.LastName}").FontFamily(Fonts.LucidaConsole).FontSize(12);
+                                    col.Item().Text($"Account Number: {debitAccount.AccountNumber}").FontFamily(Fonts.LucidaConsole).FontSize(12);
+                                    col.Item().Text($"Credit Account Holder: {creditAccount.User.FirstName} {creditAccount.User.LastName}").FontFamily(Fonts.LucidaConsole).FontSize(12);
+                                    col.Item().Text($"Account Number: {creditAccount.AccountNumber}").FontFamily(Fonts.LucidaConsole).FontSize(12);
+                                }
+                                if (creditAccount.User != null && transactionType==TransactionType.Deposit) 
                                 {
                                     col.Item().Text($"Account Holder: {creditAccount.User.FirstName} {creditAccount.User.LastName}").FontFamily(Fonts.LucidaConsole).FontSize(12); 
                                 }
                                 if (creditAccount.AccountNumber != null) 
                                 {
                                     col.Item().Text($"Credit Account: {creditAccount.AccountNumber}").FontFamily(Fonts.LucidaConsole).FontSize(12);
-                                }
-                              
-                                col.Item().Text($"Credit Amount: ${amount:F2}").FontFamily(Fonts.LucidaConsole).FontSize(12);
+                                }                           
+                                col.Item().Text($"Amount: ${amount:F2}").FontFamily(Fonts.LucidaConsole).FontSize(12);
                                 col.Item().Text($"Date: {date:yyyy-MM-dd HH:mm:ss}").FontFamily(Fonts.LucidaConsole);
                                 col.Item().Text("---------------------------------------").FontFamily(Fonts.LucidaConsole).FontSize(12).AlignCenter();                               
                                 col.Item().PaddingTop(100).Text("Thank you for being our valued customer!").FontFamily(Fonts.LucidaConsole).FontSize(11).AlignCenter();                                                       
