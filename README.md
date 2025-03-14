@@ -1,4 +1,5 @@
-********for better prievew, click on "readme.md" -> click on "code" tab next to "preview"************
+NOTE:
+********for better review, click on "readme.md" -> click on "code" tab next to "preview"************
 This is the bankify "Api" project structure.
 I used a clean and CQRS system design architecture, which is really fits to my project scenario and easily maintainable.
 Please have a review on it and give me a star if you really like it, other with comment on it.
