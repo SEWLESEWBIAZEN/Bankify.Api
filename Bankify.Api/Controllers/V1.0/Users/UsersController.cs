@@ -10,7 +10,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
 {
     public class UsersController : BaseController
     {
-        [Authorize(Roles = "Super Admin")]
+        //[Authorize(Roles = "Super Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(RecordStatus? recordStatus)
         {

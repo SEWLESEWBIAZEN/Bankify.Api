@@ -1,4 +1,5 @@
 ﻿using Bankify.Domain.Common.Shared;
+using Bankify.Domain.Models.Branches;
 using Bankify.Domain.Models.Transactions;
 using Bankify.Domain.Models.Users;
 
@@ -13,6 +14,8 @@ namespace Bankify.Domain.Models.Accounts
         public AccountType AccountType { get; set; }        
         public int? UserId { get; set; }
         public BUser User { get; set; }
+        public int? BranchId { get; set; }
+        public Branch Branch { get; set; }
         public string CurrencyCode { get; set; } = "ETB";
         //public IEnumerable<ATransaction> Transactions { get; set; }
         public ICollection<TransactionEntry> TransactionEntries { get; set; } 

@@ -1,5 +1,6 @@
 ﻿using Bankify.Application.Common.DTOs.Auth.Request;
 using Bankify.Application.Common.DTOs.Auth.Response;
+using Bankify.Application.Common.DTOs.Users.Response;
 using Bankify.Application.Common.Helpers;
 using Bankify.Application.Repository;
 using Bankify.Application.Services;
@@ -45,7 +46,7 @@ namespace Bankify.Application.Features.Commands.Auth
                     return result;
                 }
 
-                var user = await _users.FirstOrDefaultAsync(u => u.Email == request.Email && u.RecordStatus != RecordStatus.Deleted,"UserRoles.AppRole");
+                var user = await _users.FirstOrDefaultAsync(u => u.Email == request.Email && u.RecordStatus != RecordStatus.Deleted, "UserRoles.AppRole.RoleClaims.AppClaim");
                 if(user is null)
                 {
                     result.AddError(ErrorCode.NotFound, "User doesn't exist");
@@ -60,7 +61,14 @@ namespace Bankify.Application.Features.Commands.Auth
                 var loginResult = new LoginResponse
                 {
                     Success = true,
-                    Token = accessToken
+                    Token = accessToken,
+                    FirstName=user.FirstName, 
+                    LastName=user.LastName,
+                    PhoneNumber=user.PhoneNumber,
+                    Email=user.Email,
+                    Address=user.Address,
+                    UserRoles= user.UserRoles
+
                 };
                 result.Payload= loginResult;
                 result.Message = "Logged In Successfully";

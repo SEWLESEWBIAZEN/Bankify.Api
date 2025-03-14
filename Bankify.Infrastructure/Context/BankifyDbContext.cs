@@ -1,5 +1,6 @@
 ﻿using Bankify.Domain.Models;
 using Bankify.Domain.Models.Accounts;
+using Bankify.Domain.Models.Branches;
 using Bankify.Domain.Models.Transactions;
 using Bankify.Domain.Models.Users;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace Bankify.Infrastructure.Context
         {
             modelBuilder.Entity<Account>(entity =>
             {
-                entity.HasKey(x => x.Id);
+            entity.HasKey(x => x.Id);
                 entity.HasOne(p => p.User)
                 .WithMany(cc => cc.Accounts)
                 .HasForeignKey(ph => ph.UserId)
@@ -25,6 +26,11 @@ namespace Bankify.Infrastructure.Context
                 entity.HasOne(p => p.AccountType)
                .WithMany(cc => cc.Accounts)
                .HasForeignKey(ph => ph.AccountTypeId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(a => a.Branch)
+               .WithMany(a => a.Accounts)
+               .HasForeignKey(ph => ph.BranchId)
                .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(p => p.Balance)
@@ -42,7 +48,7 @@ namespace Bankify.Infrastructure.Context
              entity.HasOne(t => t.TransferedTo)
             .WithMany(a => a.TransfersTo)
             .HasForeignKey(fh => fh.TransferredToId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict);           
 
             entity.Property(t => t.AmmountTransfered)
             .HasPrecision(38, 10);
@@ -122,6 +128,10 @@ namespace Bankify.Infrastructure.Context
         public DbSet<AppRole> AppRoles { get; set; }
         public DbSet<AppClaim> AppClaims { get; set; }
         public DbSet<RoleClaim> RoleClaims { get; set; }
+        #endregion
+
+        #region Branchs
+       public DbSet<Branch> Branches { get; set; }
         #endregion
     }
 
