@@ -63,7 +63,11 @@ namespace Bankify.Application.Features.Commands.User
                 user.FirstName = request.FirstName ?? user.FirstName;
                 user.LastName = request.LastName ?? user.LastName;
                 user.Email = request.Email ?? user.Email;
-                user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password) ??BCrypt.Net.BCrypt.HashPassword(user.Password);
+                if (request.Password != null) 
+                {
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password) ?? BCrypt.Net.BCrypt.HashPassword(user.Password);
+                }
+              
                 user.PhoneNumber = request.PhoneNumber ?? user.PhoneNumber;
                 user.Address = request.Address ?? user.Address;
                 //update audit
@@ -74,7 +78,7 @@ namespace Bankify.Application.Features.Commands.User
 
                 //register action log
                 await _actionLoggerService.TakeActionLog(ActionType.Update, "User", user.Id, sessionUser, $"User namely: %{user.FirstName} {user.LastName}% was updated on {DateTime.Now} by {sessionUser}");
-
+                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password) ?? BCrypt.Net.BCrypt.HashPassword(user.Password);
 
                 result.Payload = user;
                 result.Message = "User updated successfully";

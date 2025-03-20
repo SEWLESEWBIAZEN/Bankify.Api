@@ -57,7 +57,6 @@ namespace Bankify.Application.Features.Commands.Auth
                     return result;
                 }
                 var accessToken = GenerateToken(user);
-
                 var loginResult = new LoginResponse
                 {
                     Success = true,
@@ -66,9 +65,8 @@ namespace Bankify.Application.Features.Commands.Auth
                     LastName=user.LastName,
                     PhoneNumber=user.PhoneNumber,
                     Email=user.Email,
-                    Address=user.Address,
+                    Address=user.Address??"",
                     UserRoles= user.UserRoles
-
                 };
                 result.Payload= loginResult;
                 result.Message = "Logged In Successfully";
@@ -116,7 +114,7 @@ namespace Bankify.Application.Features.Commands.Auth
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(15), // Increased expiration time
+                expires: DateTime.UtcNow.AddDays(1), // Increased expiration time
                 signingCredentials: credentials
             );
 

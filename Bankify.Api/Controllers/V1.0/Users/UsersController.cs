@@ -10,7 +10,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
 {
     public class UsersController : BaseController
     {
-        //[Authorize(Roles = "Super Admin")]
+        [Authorize(Roles = "Super Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(RecordStatus? recordStatus)
         {
@@ -40,7 +40,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromForm] CreateUserRequest createUserRequest)
         {

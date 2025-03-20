@@ -61,7 +61,14 @@ namespace Bankify.Application.Features.Commands.User
                 user.FirstName = request.FirstName;
                 user.LastName = request.LastName;
                 user.Email = request.Email;
-                user.Password =BCrypt.Net.BCrypt.HashPassword( request.Password);
+                if (request.Password != null)
+                {
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                }
+                else
+                {
+                    user.Password = BCrypt.Net.BCrypt.HashPassword("Bankify@1234");
+                }                
                 user.PhoneNumber = request.PhoneNumber;
                 user.Address = request.Address;
 
@@ -69,8 +76,9 @@ namespace Bankify.Application.Features.Commands.User
                 user.Register(sessionUser);
 
                 //saving user to db
-                await _users.AddAsync(user);               
-                result.Payload = user; 
+                await _users.AddAsync(user);                             
+                result.Payload = user;
+                
                 await _actionLoggerService.TakeActionLog(ActionType.Create, "User", user.Id, sessionUser, $"New User namely: %{user.FirstName} {user.LastName}% was created on {DateTime.Now} by {sessionUser}");
                 result.Message = "User created successfully";
             }
