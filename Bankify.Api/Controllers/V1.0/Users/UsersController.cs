@@ -10,7 +10,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
 {
     public class UsersController : BaseController
     {
-        [Authorize(Roles = "Super Admin")]
+        [Authorize(Roles = "Super Admin, Admin")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(RecordStatus? recordStatus)
         {
@@ -20,8 +20,10 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError? HandleErrorResponse(result.Errors) : Ok(usersList);
         }
 
-       
-        [Authorize(Roles = "Admin")]
+
+
+
+        [Authorize(Roles = "Super Admin, Admin")]
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -31,7 +33,11 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(userDetail);
         }
 
-        [Authorize(Roles = "Admin")]
+
+
+       
+      
+        [Authorize(Roles = "Super Admin, Admin")]
         [HttpPost("AddRoleToUser")]
         public async Task<IActionResult> AddRoleToUser([FromBody] AddRolesToUserRequest addRolesToUserRequest)
         {
@@ -39,6 +45,8 @@ namespace Bankify.Api.Controllers.V1._0.Users
             var result = await _mediator.Send(command);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
+
+
 
         //[Authorize(Roles = "Admin")]
         [HttpPost("Create")]
@@ -49,7 +57,8 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "Super Admin, Admin")]
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromForm] UpdateUserRequest updateUserRequest)
         {
@@ -58,7 +67,9 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result.Payload);
         }
 
-        [Authorize(Roles = "Admin")]
+
+
+        [Authorize(Roles = "Super Admin, Admin")]
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(int id)
         {

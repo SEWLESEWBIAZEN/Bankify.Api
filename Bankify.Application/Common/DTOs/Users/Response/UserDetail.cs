@@ -9,6 +9,7 @@
         //public string Password { get; set; }
         public string PhoneNumber { get; set; }
         public string? Address { get; set; }
+        public string? ProfilePicture { get; set; }
         public ICollection<UserRoleDetail> UserRoles { get; set; }
         //public IEnumerable<Account> Accounts { get; set; }
     }

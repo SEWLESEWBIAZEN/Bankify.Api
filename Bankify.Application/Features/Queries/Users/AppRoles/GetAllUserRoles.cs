@@ -4,26 +4,28 @@ using Bankify.Application.Services;
 using Bankify.Domain.Models.Shared;
 using Bankify.Domain.Models.Users;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bankify.Application.Features.Queries.Users.AppRoles
 {
-    public class GetAllAppRoles : IRequest<OperationalResult<List<AppRole>>>
+    public class GetAllUserRoles : IRequest<OperationalResult<List<AppRole>>>
     {
-        public bool ForDropdown { get; set; }
+        public int UserId { get; set; }
+
     }
 
-    internal class GetAllAppRolesQueryHandler : IRequestHandler<GetAllAppRoles, OperationalResult<List<AppRole>>>
+    internal class GetAllUserRolesQueryHandler : IRequestHandler<GetAllUserRoles, OperationalResult<List<AppRole>>>
     {
         private readonly IRepositoryBase<AppRole> _AppRoles;
         private readonly INetworkService _networkService;
 
-        public GetAllAppRolesQueryHandler(IRepositoryBase<AppRole> AppRoles, INetworkService networkService)
+        public GetAllUserRolesQueryHandler(IRepositoryBase<AppRole> AppRoles, INetworkService networkService)
         {
             _AppRoles = AppRoles;
             _networkService = networkService;
         }
 
-        public async Task<OperationalResult<List<AppRole>>> Handle(GetAllAppRoles query, CancellationToken cancellationToken)
+        public async Task<OperationalResult<List<AppRole>>> Handle(GetAllUserRoles query, CancellationToken cancellationToken)
         {
             var result = new OperationalResult<List<AppRole>>();
             try
@@ -35,23 +37,26 @@ namespace Bankify.Application.Features.Queries.Users.AppRoles
                     return result;
                 }
 
-                var AppRoles = new List<AppRole>();
-                if (!query.ForDropdown) 
-                {
-                    AppRoles = await _AppRoles.WhereAsync(rc => rc.RecordStatus != RecordStatus.Deleted, "RoleClaims.AppClaim");
-                }
-                else
-                {
-                    AppRoles = await _AppRoles.WhereAsync(rc => rc.Id != 0 && rc.RecordStatus != RecordStatus.Deleted);
+                var appRoles = await _AppRoles
+                .Where(rc=> rc.RecordStatus != RecordStatus.Deleted)
+                .Select(rc => new AppRole
+                    {
+                        Id = rc.Id,
+                        RoleName = rc.RoleName, 
+                        UserRoles = rc.UserRoles
+                            .Select(ur => new UserRole { AppUserId=ur.AppUserId,AppRoleId= ur.AppRoleId })
+                            .ToList()
+                    })
+                .ToListAsync();
 
-                }
-                  
-                if (AppRoles.Count == 0)
+                var UserRoles = appRoles.Where(ap => ap.UserRoles.Any(ur => ur.AppUserId == query.UserId)).ToList();
+
+                if (UserRoles.Count == 0)
                 {
                     result.AddError(ErrorCode.NotFound, "No Role Found");
                     return result;
                 }
-                result.Payload = AppRoles;
+                result.Payload = UserRoles;
 
             }
             catch (Exception ex)

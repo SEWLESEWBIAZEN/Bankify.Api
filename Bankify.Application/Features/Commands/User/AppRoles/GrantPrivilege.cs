@@ -1,6 +1,6 @@
-﻿using Bankify.Application.Common.DTOs.Users.Response;
+﻿using Bankify.Application.Common.DTOs.Users.Request.AppRoles;
+using Bankify.Application.Common.DTOs.Users.Response;
 using Bankify.Application.Common.Helpers;
-using Bankify.Application.Features.Queries.Users.AppRoles;
 using Bankify.Application.Repository;
 using Bankify.Application.Services;
 using Bankify.Domain.Models.Shared;

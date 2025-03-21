@@ -1,4 +1,5 @@
 using Bankify.Api.Extensions;
+using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,14 @@ app.Use(async (context, next) =>
 {
     context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; connect-src 'self' ms-word:;");
     await next();
+});
+
+// Serve static files from the "Uploads" folder
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/Uploads"
 });
 
 app.UseSession();

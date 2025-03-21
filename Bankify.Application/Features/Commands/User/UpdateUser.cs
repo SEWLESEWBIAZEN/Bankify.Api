@@ -17,17 +17,20 @@ namespace Bankify.Application.Features.Commands.User
     {
         private readonly IRepositoryBase<BUser> _users;
         private readonly INetworkService _networkService;
+        private readonly IFileStorageService _fileStorageService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IActionLoggerService _actionLoggerService;
 
         private ISession session;
-        public UpdateUserCommandHandler(IRepositoryBase<BUser> users, INetworkService networkService = null, IHttpContextAccessor contextAccessor = null, IActionLoggerService actionLoggerService = null)
+        public UpdateUserCommandHandler(IRepositoryBase<BUser> users, INetworkService networkService, IFileStorageService fileStorageService, IHttpContextAccessor contextAccessor, IActionLoggerService actionLoggerService)
         {
-            _users = users;
+            _users = users;          
             _networkService = networkService;
+            _fileStorageService = fileStorageService;
             _contextAccessor = contextAccessor;
-            session = _contextAccessor.HttpContext.Session;
             _actionLoggerService = actionLoggerService;
+
+            session = _contextAccessor.HttpContext.Session;
         }
 
         public async Task<OperationalResult<BUser>> Handle(UpdateUser updateUserRequest, CancellationToken cancellationToken)
@@ -63,6 +66,20 @@ namespace Bankify.Application.Features.Commands.User
                 user.FirstName = request.FirstName ?? user.FirstName;
                 user.LastName = request.LastName ?? user.LastName;
                 user.Email = request.Email ?? user.Email;
+
+                //saving profile picture to the local folder
+                //removing the previous file
+                if (user.ProfilePicture != null) 
+                {
+                    await _fileStorageService.RemoveFileAsync(user.ProfilePicture);
+                }
+
+                if (request.ProfilePicture != null)
+                {
+                    var url = await SaveProfilePicture(request.ProfilePicture);
+                    user.ProfilePicture = url;
+                }
+
                 if (request.Password != null) 
                 {
                     user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password) ?? BCrypt.Net.BCrypt.HashPassword(user.Password);
@@ -88,6 +105,10 @@ namespace Bankify.Application.Features.Commands.User
                 result.AddError(ErrorCode.ServerError, e.Message);
             }
             return result;
+        }
+        public async Task<string> SaveProfilePicture(IFormFile profilePicture)
+        {
+            return await _fileStorageService.UploadFileAsync(profilePicture);
         }
     }
 

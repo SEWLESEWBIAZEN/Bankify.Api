@@ -51,6 +51,12 @@ namespace Bankify.Application.Features.Commands.User
                 var roleNames=new List<string>();
                 var appRoleList=new List<AppRoleDetail>();
                 var userRoleList = new List<UserRole>();
+
+                //romoving an existing roles
+                var userRoles = await _userRoles.WhereAsync(ur => ur.AppUserId == request.UserId);
+                _userRoles.RemoveRange(userRoles);
+               
+
                 foreach (var roleId in request.RoleIds)
                 {
                     

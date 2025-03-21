@@ -1,4 +1,4 @@
-﻿namespace Bankify.Application.Features.Queries.Users.AppRoles
+﻿namespace Bankify.Application.Common.DTOs.Users.Request.AppRoles
 {
     public class GrantPrivilegeRequest
     {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -66,7 +67,6 @@ namespace Bankify.Api.Registrars
             {
                 config.GroupNameFormat = "'v'VVV";
                 config.SubstituteApiVersionInUrl = true;
-
             });
 
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -82,6 +82,8 @@ namespace Bankify.Api.Registrars
                                                           .AllowAnyOrigin();
                                   });
             });
+
+         
             builder.Services.AddAuthorization();
             builder.Services.BuildServiceProvider();
             builder.Services.AddEndpointsApiExplorer();
