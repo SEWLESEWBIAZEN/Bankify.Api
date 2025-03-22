@@ -14,7 +14,7 @@ namespace Bankify.Application.Features.Commands.Accounts
 {
     public class CreateAccount : IRequest<OperationalResult<Account>>
     {
-        public CreateAccountRequest CreateAccountRequest { get; set; }
+        public CreateAccountRequest CreateAccountRequest { get; set; } = new CreateAccountRequest();
     }
     internal class CreateAccountCommandHandler : IRequestHandler<CreateAccount, OperationalResult<Account>>
     {
@@ -62,21 +62,21 @@ namespace Bankify.Application.Features.Commands.Accounts
                     {
                         result.AddError(ErrorCode.EmptyRquest, "Empty Account Type Sent");
                         return result;
-                    }    
-                    
+                    }
+
                     //check if account type and user are existed.
                     var accountTypeExist = await _accountTypes.ExistWhereAsync(at => at.Id == request.AccountTypeId);
-                    if (request.UserId != null && request.UserId!=0) 
+                    if (request.UserId != null && request.UserId != 0)
                     {
-                        userExist = await _users.ExistWhereAsync(at => at.Id == request.UserId);                      
+                        userExist = await _users.ExistWhereAsync(at => at.Id == request.UserId);
                     }
-                    
+
                     if (!accountTypeExist || !userExist)
                     {
                         result.AddError(ErrorCode.NotFound, "Account Type or User does not Exist");
                         return result;
-                    }               
-                   //generate account number from the db
+                    }
+                    //generate account number from the db
                     var baseUrl = _configuration["SftpSettings:BaseUrl"];
                     var requestUrl = $"{baseUrl}/api/v1/Accounts/GenerateAccountNumber";
                     // Create an HttpRequestMessage
@@ -86,7 +86,12 @@ namespace Bankify.Application.Features.Commands.Accounts
                     var response = await _httpClient.SendAsync(newRequest, cancellationToken: cancellationToken);
                     response.EnsureSuccessStatusCode();
                     var payload = await response.Content.ReadFromJsonAsync<GenerateAccountNumberResponse>(cancellationToken: cancellationToken);
-                    var accountExist = await _accounts.ExistWhereAsync(a => a.AccountNumber == payload.AccountNumber && a.UserId == request.UserId);
+
+                    var accountExist = false;
+                    if (payload != null)
+                    {
+                        accountExist = await _accounts.ExistWhereAsync(a => a.AccountNumber == payload.AccountNumber && a.UserId == request.UserId);
+                    }
                     if (accountExist)
                     {
                         result.AddError(ErrorCode.RecordExists, "Account already Existed");
@@ -96,21 +101,21 @@ namespace Bankify.Application.Features.Commands.Accounts
                     //creating new account object
                     var newAccount = new Account
                     {
-                        AccountNumber = payload.AccountNumber,
+                        AccountNumber = payload?.AccountNumber??"",
                         UserId = request.UserId,
                         Balance = request.Balance,
-                        AccountTypeId = request.AccountTypeId                       
+                        AccountTypeId = request.AccountTypeId
                     };
-                    if(request.CurrencyCode != null)
+                    if (request.CurrencyCode != null)
                     {
                         newAccount.CurrencyCode = request.CurrencyCode;
                     }
                     newAccount.Register(sessionUser);
-                    var addAccountSuccess= await _accounts.AddAsync(newAccount);
+                    var addAccountSuccess = await _accounts.AddAsync(newAccount);
                     await _actionLoggerService.TakeActionLog(ActionType.Create, "Account", newAccount.Id, sessionUser, $"New Account with Number: {newAccount.AccountNumber} was created at {DateTime.Now} by {sessionUser}");
                     result.Message = "New Account Created";
                     result.Payload = newAccount;
-                   await transaction.CommitAsync(cancellationToken:cancellationToken);
+                    await transaction.CommitAsync(cancellationToken: cancellationToken);
                     return result;
                 }
                 catch (Exception ex)

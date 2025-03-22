@@ -34,7 +34,7 @@ namespace Bankify.Application.Features.Queries.Accounts
                     return result;
 
                 }
-                if (request.UserId == 0 || request.UserId == null) 
+                if (request.UserId == 0 || request?.UserId == null) 
                 {
                     result.AddError(ErrorCode.EmptyRquest, "Empty User Id Sent");
                     return result;

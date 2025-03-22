@@ -2,6 +2,6 @@
 {
     public class CreateAppRoleRequest
     {
-        public string AppRoleName { get; set; }
+        public string AppRoleName { get; set; }=String.Empty;
     }
 }

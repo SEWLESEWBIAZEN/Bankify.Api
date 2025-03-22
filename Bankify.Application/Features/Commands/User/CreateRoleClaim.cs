@@ -10,7 +10,7 @@ namespace Bankify.Application.Features.Commands.User
 {
     public class CreateRoleClaim:IRequest<OperationalResult<AppClaim>>
     {
-        public CreateRoleClaimRequest CreateRoleClaimRequest { get; set; }
+        public CreateRoleClaimRequest CreateRoleClaimRequest { get; set; }=new CreateRoleClaimRequest();
     }
     internal class CreateRoleClaimCommandHandler:IRequestHandler<CreateRoleClaim, OperationalResult<AppClaim>>
     {

@@ -3,7 +3,7 @@
     public class RoleClaimDetails
     {           
         public int AppRoleId { get; set; }
-        public IEnumerable<AppClaimDetail> AppClaims { get; set; }
+        public IEnumerable<AppClaimDetail> AppClaims { get; set; }=new List<AppClaimDetail>();
         
     }
 }

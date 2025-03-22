@@ -4,7 +4,7 @@ namespace Bankify.Application.Common.Helpers
     public class OperationalResult<T>
     {
         public T Payload { get; set; }
-        public string Message { get; set; }
+        public string Message { get; set; }=String.Empty;
         public bool IsError { get; private set; }
         public List<Error> Errors { get; } = [];
 
@@ -54,8 +54,8 @@ namespace Bankify.Application.Common.Helpers
     }
     public class UploadDocumentResponse
     {
-        public string WebUrl { get; set; }
-        public string DocumentId { get; set; }
+        public string WebUrl { get; set; }=String.Empty;
+        public string DocumentId { get; set; }=String.Empty;
     }
 
 }

@@ -6,11 +6,11 @@ namespace Bankify.Application.Common.DTOs.Transfers.Response
     {
         public int Id { get; set; }
         public int TransferedFromId { get; set; }
-        public AccountDetail TransferedFrom { get; set; }
+        public AccountDetail TransferedFrom { get; set; }=new AccountDetail();
         public int TransferredToId { get; set; }
-        public AccountDetail TransferedTo { get; set; }
+        public AccountDetail TransferedTo { get; set; }=new AccountDetail();
         public decimal AmmountTransfered { get; set; }
-        public string TransferStatus { get; set; }
+        public string TransferStatus { get; set; }=String.Empty;
         public DateTime TransferedOn { get; set; }
     }
 }

@@ -3,6 +3,6 @@
     public class AppClaimDetail
     {
         public int Id { get; set; }
-        public string ClaimString { get; set; }
+        public string ClaimString { get; set; }=String.Empty;
     }
 }

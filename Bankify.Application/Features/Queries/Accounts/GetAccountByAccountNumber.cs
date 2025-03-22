@@ -9,7 +9,7 @@ namespace Bankify.Application.Features.Queries.Accounts
 {
     public class GetAccountByAccountNumber : IRequest<OperationalResult<Account>>
     {
-        public string AccountNumber { get; set; }
+        public string AccountNumber { get; set; }=String.Empty;
     }
     internal class GetAccountByAccountNumberQueryHandler : IRequestHandler<GetAccountByAccountNumber, OperationalResult<Account>>
     {

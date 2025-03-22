@@ -38,7 +38,7 @@ namespace Bankify.Application.Features.Commands.Accounts
                 if (accounts.Count != 0)
                 {
                     var latestAccount = accounts.FirstOrDefault();
-                    newAccountNumber = Convert.ToInt64(latestAccount.AccountNumber) + 1;
+                    newAccountNumber = Convert.ToInt64(latestAccount?.AccountNumber) + 1;
                     result.Payload = new GenerateAccountNumberResponse { AccountNumber = newAccountNumber.ToString() };                  
                     return result;
                 }
@@ -60,6 +60,6 @@ namespace Bankify.Application.Features.Commands.Accounts
 
     public class GenerateAccountNumberResponse
     {
-        public string AccountNumber { get; set; }
+        public string AccountNumber { get; set; }=String.Empty;
     }
 }

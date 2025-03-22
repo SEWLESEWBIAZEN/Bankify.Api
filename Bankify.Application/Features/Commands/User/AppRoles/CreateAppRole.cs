@@ -9,7 +9,7 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
 {
     public class CreateAppRole : IRequest<OperationalResult<AppRole>>
     {
-        public CreateAppRoleRequest CreateAppRoleRequest { get; set; }
+        public CreateAppRoleRequest CreateAppRoleRequest { get; set; }=new CreateAppRoleRequest();
     }
     internal class CreateAppRoleCommandHandler : IRequestHandler<CreateAppRole, OperationalResult<AppRole>>
     {

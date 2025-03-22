@@ -13,7 +13,7 @@ namespace Bankify.Application.Features.Commands.Accounts
 {
     public class DepositToAccount : IRequest<OperationalResult<Stream>>
     {
-        public DepositToAccountRequest DepositToAccountRequest { get; set; }
+        public DepositToAccountRequest DepositToAccountRequest { get; set; }=new DepositToAccountRequest();
     }
 
     internal class DepositToAccountCommandHandler : IRequestHandler<DepositToAccount, OperationalResult<Stream>>

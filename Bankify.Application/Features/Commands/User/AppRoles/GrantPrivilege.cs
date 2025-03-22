@@ -12,7 +12,7 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
 {
     public class GrantPrivilege:IRequest<OperationalResult<RoleClaimDetails>>
     {
-        public GrantPrivilegeRequest GrantPrivilegeRequest { get; set; }
+        public GrantPrivilegeRequest GrantPrivilegeRequest { get; set; }=new GrantPrivilegeRequest();
     }
 
    internal class GrantPrivilegeCommandHandler:IRequestHandler<GrantPrivilege, OperationalResult<RoleClaimDetails>>

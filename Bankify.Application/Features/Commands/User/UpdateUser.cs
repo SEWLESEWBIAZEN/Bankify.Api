@@ -11,7 +11,7 @@ namespace Bankify.Application.Features.Commands.User
 {
     public class UpdateUser:IRequest<OperationalResult<BUser>>
     {     
-        public UpdateUserRequest UpdateUserRequest { get; set; }
+        public UpdateUserRequest UpdateUserRequest { get; set; }=new UpdateUserRequest();
     }
     internal class UpdateUserCommandHandler : IRequestHandler<UpdateUser, OperationalResult<BUser>>
     {
@@ -47,7 +47,7 @@ namespace Bankify.Application.Features.Commands.User
                     return result;
                 }
                 //if no user Id is provided
-                if (request.Id ==null || request.Id == 0)
+                if (request?.Id ==null || request.Id == 0)
                 {
                     result.AddError(ErrorCode.EmptyRquest, "User Id is required");
                     return result;

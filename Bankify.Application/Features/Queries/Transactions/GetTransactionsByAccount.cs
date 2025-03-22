@@ -10,7 +10,7 @@ namespace Bankify.Application.Features.Queries.Transactions
 {
     public class GetTransactionsByAccount : IRequest<OperationalResult<List<ATransaction>>>
     {
-        public string AccountNumber { get; set; }
+        public string AccountNumber { get; set; }=String.Empty;
 
     }
     internal class GetTransactionsByAccountQueryHandler : IRequestHandler<GetTransactionsByAccount, OperationalResult<List<ATransaction>>>

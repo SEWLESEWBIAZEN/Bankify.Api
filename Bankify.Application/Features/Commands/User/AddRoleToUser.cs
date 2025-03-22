@@ -12,7 +12,7 @@ namespace Bankify.Application.Features.Commands.User
 {
     public class AddRoleToUser:IRequest<OperationalResult<UserRolesDetails>>
     {
-      public AddRolesToUserRequest AddRolesToUserRequest { get; set; }
+      public AddRolesToUserRequest AddRolesToUserRequest { get; set; }=new AddRolesToUserRequest();
     }
 
     internal class AddRoleToUserHandler : IRequestHandler<AddRoleToUser, OperationalResult<UserRolesDetails>>

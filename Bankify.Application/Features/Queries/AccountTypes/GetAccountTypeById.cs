@@ -33,7 +33,7 @@ namespace Bankify.Application.Features.Queries.AccountTypes
             var result= new OperationalResult<AccountType>();
             try 
             {
-                if (request.Id == 0 || request.Id == null) 
+                if (request.Id == 0 || request?.Id == null) 
                 {
                     result.AddError(ErrorCode.EmptyRquest, "Empty Id Sent!");
                     return result;

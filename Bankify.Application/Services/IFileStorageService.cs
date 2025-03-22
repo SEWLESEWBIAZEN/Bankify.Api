@@ -10,7 +10,7 @@ namespace Bankify.Application.Services
         public class FileStorageService : IFileStorageService    
     {
         
-        private string _localTempPath;
+     
 
         public async Task<string> UploadFileAsync(IFormFile file)
         {

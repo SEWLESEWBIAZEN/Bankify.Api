@@ -2,6 +2,6 @@
 {
     public class CreateRoleClaimRequest
     {
-        public string ClaimName { get; set; }
+        public string ClaimName { get; set; }=String.Empty;
     }
 }

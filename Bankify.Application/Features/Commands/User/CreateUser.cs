@@ -11,7 +11,7 @@ namespace Bankify.Application.Features.Commands.User
 {
     public class CreateUser : IRequest<OperationalResult<BUser>>
     {
-        public CreateUserRequest CreateUserRequest { get; set; }
+        public CreateUserRequest CreateUserRequest { get; set; }=new CreateUserRequest();
     }
     internal class CreateUserCommandHandler : IRequestHandler<CreateUser, OperationalResult<BUser>>
     {

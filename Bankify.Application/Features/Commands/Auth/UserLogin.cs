@@ -17,7 +17,7 @@ namespace Bankify.Application.Features.Commands.Auth
 {
     public class UserLogin:IRequest<OperationalResult<LoginResponse>>
     {
-        public LoginRequest LoginRequest { get; set; }
+        public LoginRequest LoginRequest { get; set; }=new LoginRequest();
     }
 
     internal class UserLoginCommandHandler : IRequestHandler<UserLogin, OperationalResult<LoginResponse>> 

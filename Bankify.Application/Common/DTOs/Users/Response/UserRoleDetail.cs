@@ -3,7 +3,7 @@
     public class UserRoleDetail
     {
         public int Id { get; set; }       
-        public AppRoleDetail AppRole { get; set; }      
+        public AppRoleDetail AppRole { get; set; }   =new AppRoleDetail();   
 
     }
 }

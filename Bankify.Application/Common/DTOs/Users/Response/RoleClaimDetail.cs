@@ -3,7 +3,7 @@
     public class RoleClaimDetail
     {
         public int Id { get; set; }      
-        public AppClaimDetail AppClaim { get; set; }
+        public AppClaimDetail AppClaim { get; set; }=new AppClaimDetail();
 
     }
 }

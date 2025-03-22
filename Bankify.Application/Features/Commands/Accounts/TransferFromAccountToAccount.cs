@@ -12,7 +12,7 @@ namespace Bankify.Application.Features.Commands.Accounts
 {
     public class TransferFromAccountToAccount:IRequest<OperationalResult<Transfer>>
     {
-        public TransferFromAccountToAccountRequest TransferFromAccountToAccountRequest { get; set; }
+        public TransferFromAccountToAccountRequest TransferFromAccountToAccountRequest { get; set; }=new TransferFromAccountToAccountRequest();
     }
 
     internal class TransferFromAccountToAccountCommandHandler:IRequestHandler<TransferFromAccountToAccount, OperationalResult<Transfer>>

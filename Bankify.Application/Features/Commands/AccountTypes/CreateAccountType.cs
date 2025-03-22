@@ -11,7 +11,7 @@ namespace Bankify.Application.Features.Commands.AccountTypes
 {
     public class CreateAccountType:IRequest<OperationalResult<AccountType>>
     {
-        public CreateAccountTypeRequest CreateAccountTypeRequest { get; set; }
+        public CreateAccountTypeRequest CreateAccountTypeRequest { get; set; }=new CreateAccountTypeRequest();
     }
     internal class CreateAccountTypeCommandHandler:IRequestHandler<CreateAccountType, OperationalResult<AccountType>>
     {

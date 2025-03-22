@@ -8,9 +8,9 @@ namespace Bankify.Application.Common.DTOs.TransactionEntries.Response
     {
         public int Id { get; set; }
         public int TransactionId { get; set; }
-        public TransactionDetail Transaction { get; set; }
+        public TransactionDetail Transaction { get; set; }=new TransactionDetail();
         public int AccountId { get; set; }
-        public MinimalAccountDetail Account { get; set; }
+        public MinimalAccountDetail Account { get; set; }=new MinimalAccountDetail();
         public decimal BalanceBeforeTransaction { get; set; } = 0.00m;
         public decimal BalanceAfterTransaction { get; set; } = 0.00m;
         public decimal Amount { get; set; }

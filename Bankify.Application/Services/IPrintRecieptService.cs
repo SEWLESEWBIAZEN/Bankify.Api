@@ -41,8 +41,8 @@ namespace Bankify.Application.Services
                                 col.Item().Text($"Transaction ID: {transactionId}").FontFamily(Fonts.LucidaConsole).FontSize(12);
                                 if(transactionType ==TransactionType.Transfer)
                                 {
-                                    col.Item().Text($"Debit Account Holder: {debitAccount.User.FirstName} {debitAccount.User.LastName}").FontFamily(Fonts.LucidaConsole).FontSize(12);
-                                    col.Item().Text($"Account Number: {debitAccount.AccountNumber}").FontFamily(Fonts.LucidaConsole).FontSize(12);
+                                    col.Item().Text($"Debit Account Holder: {debitAccount?.User.FirstName} {debitAccount?.User.LastName}").FontFamily(Fonts.LucidaConsole).FontSize(12);
+                                    col.Item().Text($"Account Number: {debitAccount?.AccountNumber}").FontFamily(Fonts.LucidaConsole).FontSize(12);
                                     col.Item().Text($"Credit Account Holder: {creditAccount.User.FirstName} {creditAccount.User.LastName}").FontFamily(Fonts.LucidaConsole).FontSize(12);
                                     col.Item().Text($"Account Number: {creditAccount.AccountNumber}").FontFamily(Fonts.LucidaConsole).FontSize(12);
                                 }

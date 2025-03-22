@@ -12,7 +12,7 @@ namespace Bankify.Application.Features.Commands.Accounts
 {
     public class WithdrawFromAccount : IRequest<OperationalResult<ATransaction>>
     {
-        public WithdrawFromAccountRequest WithdrawFromAccountRequest { get; set; }
+        public WithdrawFromAccountRequest WithdrawFromAccountRequest { get; set; }=new WithdrawFromAccountRequest();
     }
 
     internal class WithdrawFromAccountCommandhandler : IRequestHandler<WithdrawFromAccount, OperationalResult<ATransaction>>
@@ -54,7 +54,7 @@ namespace Bankify.Application.Features.Commands.Accounts
                     }
 
                     //check if the request has account number and ammount
-                    if (request.AccountNumber == null || request.Ammount == 0 || request.Ammount == null)
+                    if (request.AccountNumber == null || request.Ammount == 0 || request?.Ammount == null)
                     {
                         result.AddError(ErrorCode.ValidationError, "InComplete Request! ");
                         return result;

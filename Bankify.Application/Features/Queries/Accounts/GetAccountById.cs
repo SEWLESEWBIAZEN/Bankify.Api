@@ -32,7 +32,7 @@ namespace Bankify.Application.Features.Queries.Accounts
                     result.AddError(ErrorCode.NetworkError, "Network Error(Unable to reach to database)");
                     return result;
                 }
-                if (request.Id == 0 || request.Id==null) 
+                if (request.Id == 0 || request?.Id==null) 
                 {
                     result.AddError(ErrorCode.EmptyRquest, "Empty Id is Sent");
                     return result;

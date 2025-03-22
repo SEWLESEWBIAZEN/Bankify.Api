@@ -12,7 +12,7 @@ namespace Bankify.Application.Features.Commands.AccountTypes
 {
     public class UpdateAccountType:IRequest<OperationalResult<AccountType>>
     {
-        public UpdateAccountTypeRequest UpdateAccountTypeRequest { get; set; }
+        public UpdateAccountTypeRequest UpdateAccountTypeRequest { get; set; }=new UpdateAccountTypeRequest();
     }
     internal class UpdateAccountTypeCommandHandler : IRequestHandler<UpdateAccountType, OperationalResult<AccountType>>
     {
