@@ -48,5 +48,12 @@ namespace Bankify.Api.Controllers.V1._0.Users
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result.Payload);
 
         }
+
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> Delete(int id){
+            var command = new DeleteAppRole { Id=id};
+            var result = await _mediator.Send(command);
+            return result.IsError ? HandleErrorResponse(result.Errors): Ok(result);
+        }
     }
 }
