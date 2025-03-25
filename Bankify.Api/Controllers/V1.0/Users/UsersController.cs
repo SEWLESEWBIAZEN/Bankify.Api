@@ -32,10 +32,7 @@ namespace Bankify.Api.Controllers.V1._0.Users
             var userDetail = _mapper.Map<UserDetail>(result.Payload);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(userDetail);
         }
-
-
-
-       
+              
       
         [Authorize(Roles = "Super Admin, Admin")]
         [HttpPost("AddRoleToUser")]
@@ -66,8 +63,6 @@ namespace Bankify.Api.Controllers.V1._0.Users
             var result = await _mediator.Send(command);
             return result.IsError ? HandleErrorResponse(result.Errors) : Ok(result.Payload);
         }
-
-
 
         [Authorize(Roles = "Super Admin, Admin")]
         [HttpDelete("Delete")]

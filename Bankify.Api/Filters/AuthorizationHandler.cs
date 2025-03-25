@@ -1,108 +1,106 @@
-﻿
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
 
 namespace Bankify.Api.Filters
 {
     public class AuthorizationHandler : IAuthorizationFilter
     {
-
         private readonly IHttpContextAccessor _httpContextAccessor;
-        //private readonly IIdentityService _identityService;
-        //private static string _enviromentVariable = Environment.GetEnvironmentVariable("GetNetErpServiceID");
-        //private static long _serviceId = 28;
+        private readonly IConfiguration _configuration;
 
-        public AuthorizationHandler(IHttpContextAccessor httpContextAccessor)
+        public AuthorizationHandler(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _httpContextAccessor = httpContextAccessor;
-            //_identityService = identityService;
+            _configuration = configuration;
         }
 
         public List<string> Anonymous = new List<string>
         {
-            //"Actions-IdentityClaimSeeder",
-            //"Account-ForgotPassword",
-            //"Account-CreateUser",
-            //"Case-GenerateFileNumber",
-            //"Contract-GenerateFileNumber",
-            //"Matters-GenerateFileNumber",
-            //"UserGuide-GetAll",
-            //"Template-DownloadTemplate",
-            //"Documents-GetDocumentUrl",
-            //"Addendum-GenerateAddendumNumber"
+            "Auth-Login"            
         };
+
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            //if (context != null && context?.ActionDescriptor is ControllerActionDescriptor descriptor)
-            //{
-            //    // get api resource
-            //    string apiClaim = string.Format("{0}-{1}", descriptor.ControllerName, descriptor.ActionName);
+            if (context?.ActionDescriptor is not ControllerActionDescriptor descriptor)
+                return;
 
-            //    //get header values
-            //    var serviceKey = context.HttpContext.Request.Headers["Servicekey"].ToString();
-            //    var email = context.HttpContext.Request.Headers["email"].ToString();
-            //    var accessToken = context.HttpContext.Request.Headers["accessToken"].ToString();
-            //    var idToken = context.HttpContext.Request.Headers["IdToken"].ToString();
-            //    var OrganizationId = context.HttpContext.Request.Headers["OrganizationId"].ToString();
-            //    var clientClaim = context.HttpContext.Request.Headers["clientClaim"].ToString();
-            //    var IsMultiTenant = Convert.ToBoolean(context.HttpContext.Request.Headers["IsMultiTenant"]);
-            //    if (!Anonymous.Contains(apiClaim))
-            //    {
-            //        if (String.IsNullOrEmpty(accessToken))
-            //        {
-            //            context.Result = new UnauthorizedObjectResult(new { message = "Access token is empty." });
-            //            return;
-            //        }
+            // Get API resource identifier
+            string apiClaim = $"{descriptor.ControllerName}-{descriptor.ActionName}";
 
-            //        //validate request using identityService
-            //        var isValidRequest = _identityService.ValidateAllToken(accessToken, idToken, apiClaim, clientClaim, _serviceId, OrganizationId, IsMultiTenant);
+            // Skip authorization for anonymous endpoints
+            if (Anonymous.Contains(apiClaim))
+                return;
 
-            //        if (isValidRequest.IsError)
-            //        {
-            //            isValidRequest.Errors[0].Message = $"User is not Authorized to access {apiClaim}";
-            //            context.Result = new UnauthorizedObjectResult(isValidRequest);
-            //        }
-            //        else if (isValidRequest.Message == "101")
-            //        {
-            //            isValidRequest.Errors[0].Message = $"User is not Authorized to access {apiClaim}";
-            //            context.Result = new UnauthorizedObjectResult(isValidRequest);
-            //        }
-            //        else if (isValidRequest.Message == "102")
-            //        {
-            //            isValidRequest.Errors[0].Message = $"User is not Authorized to access {apiClaim}";
-            //            context.Result = new UnauthorizedObjectResult(isValidRequest);
-            //        }
-            //        else if (isValidRequest.Message == "103")
-            //        {
-            //            isValidRequest.Errors[0].Message = $"User is not Authorized to access {apiClaim}";
-            //            context.Result = new UnauthorizedObjectResult(isValidRequest);
-            //        }
-            //        else if (isValidRequest.Message == "104")
-            //        {
-            //            isValidRequest.Errors[0].Message = $"User is not Authorized to access {apiClaim}";
-            //            context.Result = new UnauthorizedObjectResult(isValidRequest);
-            //        }
-            //        else
-            //        {
-            //            _httpContextAccessor?.HttpContext?.Session.SetString("client", isValidRequest.Payload.ClientId);
-            //            _httpContextAccessor?.HttpContext?.Session.SetString("user", isValidRequest.Payload.UserId);
-            //            _httpContextAccessor?.HttpContext?.Session.SetString("email", email);
-            //            _httpContextAccessor?.HttpContext?.Session.SetString("accessToken", accessToken);
-            //            _httpContextAccessor?.HttpContext?.Session.SetString("idToken", idToken);
-            //        }
+            // Get authorization header
+            var authHeader = context.HttpContext.Request.Headers["Authorization"].ToString();
+            
+            if (string.IsNullOrEmpty(authHeader))
+            {
+                context.Result = new UnauthorizedObjectResult(new { message = "Authorization header is missing." });
+                return;
+            }
 
-            //    }
-            //    //_httpContextAccessor?.HttpContext?.Session.SetString("user", "Default User");
-            //    //_httpContextAccessor?.HttpContext?.Session.SetString("email", email);
+            // Extract token from "Bearer {token}" format
+            var token = authHeader.Split(' ').LastOrDefault();
+            if (string.IsNullOrEmpty(token))
+            {
+                context.Result = new UnauthorizedObjectResult(new { message = "Invalid token format." });
+                return;
+            }
 
-            //}
-            //else
-            //{
-            //    context.Result = new UnauthorizedObjectResult(new { message = "context is  empty." });
-            //}
+            try
+            {
+                // Validate and read the token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
 
-                _httpContextAccessor?.HttpContext?.Session.SetString("user", "Default User");
-                _httpContextAccessor?.HttpContext?.Session.SetString("email", "sewlesewbiazen65@gmail.com");
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = _configuration["Jwt:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+
+                // Get claims from the token
+                var userId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                var userName = jwtToken.Claims.First(x => x.Type == ClaimTypes.Name).Value;
+                var email = jwtToken.Claims.First(x => x.Type == ClaimTypes.Email).Value;
+                var userRoles = jwtToken.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
+
+                // Store claims in HttpContext for later use
+                context.HttpContext.Items["UserId"] = userId;
+                context.HttpContext.Items["UserName"] = userName;
+                context.HttpContext.Items["Email"]=email;
+                context.HttpContext.Items["UserRoles"] = userRoles;
+               
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                context.Result = new UnauthorizedObjectResult(new { message = "Token has expired." });
+                return;
+            }
+            catch (SecurityTokenValidationException)
+            {
+                context.Result = new UnauthorizedObjectResult(new { message = "Invalid token." });
+                return;
+            }
+            catch (Exception ex)
+            {
+                context.Result = new UnauthorizedObjectResult(new { message = "Unauthorized", details = ex.Message });
+                return;
+            }
         }
     }
 }
