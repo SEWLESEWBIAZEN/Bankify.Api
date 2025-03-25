@@ -39,7 +39,7 @@ namespace Bankify.Application.Features.Commands.User
         {
             var result = new OperationalResult<UserRolesDetails>();
             var request= addRolesToUserRequest.AddRolesToUserRequest;
-            var sessionUser = session.GetString("user");
+            var sessionUser = session.GetString("user")??"";
             try
             {
                 var dbAvailable = await _networkService.IsConnected();
@@ -52,7 +52,7 @@ namespace Bankify.Application.Features.Commands.User
                 var appRoleList=new List<AppRoleDetail>();
                 var userRoleList = new List<UserRole>();
 
-                //romoving an existing roles
+                //removing an existing roles
                 var userRoles = await _userRoles.WhereAsync(ur => ur.AppUserId == request.UserId);
                 _userRoles.RemoveRange(userRoles);
                
@@ -86,6 +86,7 @@ namespace Bankify.Application.Features.Commands.User
                     AppUserId = request.UserId,
                     AppRoles = appRoleList
                 };
+                result.Message="User Role Updated Successfully!";
                 result.Payload = userRolesDetailsResponse;
             }
             catch (Exception e)

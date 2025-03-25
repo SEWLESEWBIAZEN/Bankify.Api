@@ -3,6 +3,7 @@ using Bankify.Application.Repository;
 using Bankify.Application.Services;
 using Bankify.Domain.Models.Users;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Bankify.Application.Features.Commands.User
 {
@@ -15,16 +16,19 @@ namespace Bankify.Application.Features.Commands.User
     {
         private readonly IRepositoryBase<AppClaim> _roleClaims;
         private readonly INetworkService _networkService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DeleteRoleClaimCommandHandler(IRepositoryBase<AppClaim> roleClaims, INetworkService networkService)
+        public DeleteRoleClaimCommandHandler(IRepositoryBase<AppClaim> roleClaims, INetworkService networkService, IHttpContextAccessor httpContextAccessor)
         {
             _roleClaims = roleClaims;
             _networkService = networkService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<OperationalResult<AppClaim>> Handle(DeleteRoleClaim request, CancellationToken cancellationToken)
         {
             var result=new OperationalResult<AppClaim>();
+            var sessionUser=_httpContextAccessor.HttpContext.Items["UserName"].ToString();
             try 
             {
                 var dbReachable = await _networkService.IsConnected();
@@ -39,8 +43,8 @@ namespace Bankify.Application.Features.Commands.User
                 {
                     result.AddError(ErrorCode.NotFound, "Claim is Not Found");
                     return result;
-                }
-                await _roleClaims.RemoveAsync(roleClaim);
+                }                
+                 _roleClaims.Remove(roleClaim);
                 result.Message = "Claim Deleted/Removed";
             }
             catch (Exception ex) 

@@ -7,6 +7,7 @@ using Bankify.Application.Services;
 using Bankify.Domain.Models.Shared;
 using Bankify.Domain.Models.Users;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,29 +16,26 @@ using System.Text;
 
 namespace Bankify.Application.Features.Commands.Auth
 {
-    public class UserLogin:IRequest<OperationalResult<LoginResponse>>
+    public class UserLogin : IRequest<OperationalResult<LoginResponse>>
     {
-        public LoginRequest LoginRequest { get; set; }=new LoginRequest();
+        public LoginRequest LoginRequest { get; set; } = new LoginRequest();
     }
-
-    internal class UserLoginCommandHandler : IRequestHandler<UserLogin, OperationalResult<LoginResponse>> 
+    internal class UserLoginCommandHandler : IRequestHandler<UserLogin, OperationalResult<LoginResponse>>
     {
         private readonly IRepositoryBase<BUser> _users;
         private readonly INetworkService _networkService;
         private readonly IConfiguration _configuration;
-
         public UserLoginCommandHandler(IRepositoryBase<BUser> users, INetworkService networkService, IConfiguration configuration)
         {
             _users = users;
             _networkService = networkService;
             _configuration = configuration;
         }
-
         public async Task<OperationalResult<LoginResponse>> Handle(UserLogin command, CancellationToken cancellationToken)
         {
-            var result=new OperationalResult<LoginResponse>();
-            var request=command.LoginRequest;
-            try 
+            var result = new OperationalResult<LoginResponse>();
+            var request = command.LoginRequest;
+            try
             {
                 var dbReachable = await _networkService.IsConnected();
                 if (!dbReachable)
@@ -47,12 +45,13 @@ namespace Bankify.Application.Features.Commands.Auth
                 }
 
                 var user = await _users.FirstOrDefaultAsync(u => u.Email == request.Email && u.RecordStatus != RecordStatus.Deleted, "UserRoles.AppRole.RoleClaims.AppClaim");
-                if(user is null)
+                if (user is null)
                 {
                     result.AddError(ErrorCode.NotFound, "User doesn't exist");
                     return result;
                 }
-                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password)){
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+                {
                     result.AddError(ErrorCode.ValidationError, "Invalid Password");
                     return result;
                 }
@@ -61,22 +60,20 @@ namespace Bankify.Application.Features.Commands.Auth
                 {
                     Success = true,
                     Token = accessToken,
-                    FirstName=user.FirstName, 
-                    LastName=user.LastName,
-                    PhoneNumber=user.PhoneNumber,
-                    Email=user.Email,
-                    Address=user.Address??"",
-                    UserRoles= user.UserRoles
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    Email = user.Email,
+                    Address = user.Address ?? "",
+                    UserRoles = user.UserRoles
                 };
-                result.Payload= loginResult;
+                result.Payload = loginResult;
                 result.Message = "Logged In Successfully";
-
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 result.AddError(ErrorCode.ServerError, ex.Message);
             }
-
             return result;
         }
 

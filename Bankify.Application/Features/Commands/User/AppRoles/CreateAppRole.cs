@@ -2,6 +2,7 @@
 using Bankify.Application.Common.Helpers;
 using Bankify.Application.Repository;
 using Bankify.Application.Services;
+using Bankify.Domain.Models.Shared;
 using Bankify.Domain.Models.Users;
 using MediatR;
 
@@ -41,10 +42,12 @@ namespace Bankify.Application.Features.Commands.User.AppRoles
                     return result;
                 }
 
-                var roleAlreadyExists = await _appRoles.ExistWhereAsync(rc => rc.RoleName == request.AppRoleName);
-                if (roleAlreadyExists)
+                var role = await _appRoles.FirstOrDefaultAsync(rc => rc.RoleName == request.AppRoleName);
+                if (role!=null && role.RecordStatus!=RecordStatus.Active)
                 {
-                    result.AddError(ErrorCode.RecordExists, "Role Already Exists");
+                    role.RecordStatus = RecordStatus.Active;
+                    await _appRoles.UpdateAsync(role);
+                    result.Message= "Role Added";
                     return result;
                 }
 
