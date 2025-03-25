@@ -17,7 +17,7 @@ namespace Bankify.Infrastructure.Context
         {
             modelBuilder.Entity<Account>(entity =>
             {
-            entity.HasKey(x => x.Id);
+                entity.HasKey(x => x.Id);
                 entity.HasOne(p => p.User)
                 .WithMany(cc => cc.Accounts)
                 .HasForeignKey(ph => ph.UserId)
@@ -37,30 +37,32 @@ namespace Bankify.Infrastructure.Context
                 .HasPrecision(38, 10);
 
             });
-            modelBuilder.Entity<Transfer>(entity => {
-            entity.HasKey(x => x.Id);
+            modelBuilder.Entity<Transfer>(entity =>
+            {
+                entity.HasKey(x => x.Id);
 
-            entity.HasOne(t => t.TransferedFrom)
-            .WithMany(a => a.TransfersFrom)
-            .HasForeignKey(fh => fh.TransferedFromId)
-            .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(t => t.TransferedFrom)
+                .WithMany(a => a.TransfersFrom)
+                .HasForeignKey(fh => fh.TransferedFromId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-             entity.HasOne(t => t.TransferedTo)
-            .WithMany(a => a.TransfersTo)
-            .HasForeignKey(fh => fh.TransferredToId)
-            .OnDelete(DeleteBehavior.Restrict);           
+                entity.HasOne(t => t.TransferedTo)
+               .WithMany(a => a.TransfersTo)
+               .HasForeignKey(fh => fh.TransferredToId)
+               .OnDelete(DeleteBehavior.Restrict);
 
-            entity.Property(t => t.AmmountTransfered)
-            .HasPrecision(38, 10);
+                entity.Property(t => t.AmmountTransfered)
+                .HasPrecision(38, 10);
 
-            });            
-                                      
+            });
+
             modelBuilder.Entity<AccountType>()
                 .Property(tt => tt.InterestRate)
                 .HasPrecision(5, 2);
 
             //transaction entries
-            modelBuilder.Entity<TransactionEntry>(entity => { 
+            modelBuilder.Entity<TransactionEntry>(entity =>
+            {
                 entity.HasKey(t => t.Id);
                 entity.HasOne(t => t.Transaction)
                 .WithMany(tr => tr.TransactionEntries)
@@ -71,14 +73,13 @@ namespace Bankify.Infrastructure.Context
                 .HasForeignKey(fh => fh.AccountId)
                 .OnDelete(DeleteBehavior.Restrict);
                 entity.Property(e => e.BalanceBeforeTransaction).HasPrecision(25, 5);
-                entity.Property(e=>e.Amount).HasPrecision(25, 5);
-                entity.Property(e=>e.BalanceAfterTransaction).HasPrecision(25, 5);
+                entity.Property(e => e.Amount).HasPrecision(25, 5);
+                entity.Property(e => e.BalanceAfterTransaction).HasPrecision(25, 5);
 
             });
-
-            //Authorization          
-
-            modelBuilder.Entity<UserRole>(entity => { 
+            //Authorization      
+            modelBuilder.Entity<UserRole>(entity =>
+            {
                 entity.HasKey(t => t.Id);
                 entity.HasOne(ur => ur.AppRole)
                 .WithMany(ar => ar.UserRoles)
@@ -90,8 +91,8 @@ namespace Bankify.Infrastructure.Context
                 .OnDelete(DeleteBehavior.Restrict);
             });
 
-
-            modelBuilder.Entity<RoleClaim>(entity => { 
+            modelBuilder.Entity<RoleClaim>(entity =>
+            {
                 entity.HasKey(e => e.Id);
                 entity.HasOne(rc => rc.AppClaim)
                 .WithMany(ac => ac.RoleClaims)
@@ -101,7 +102,7 @@ namespace Bankify.Infrastructure.Context
                 .WithMany(ar => ar.RoleClaims)
                 .HasForeignKey(fh => fh.AppRoleId)
                 .OnDelete(DeleteBehavior.Restrict);
-            });                            
+            });
         }
 
         #region Users
@@ -118,7 +119,7 @@ namespace Bankify.Infrastructure.Context
         #endregion
 
         #region Transactions
-        public DbSet<ATransaction> TransactionLogs { get; set; }       
+        public DbSet<ATransaction> TransactionLogs { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<TransactionEntry> TransactionEntries { get; set; }
         #endregion
@@ -131,7 +132,7 @@ namespace Bankify.Infrastructure.Context
         #endregion
 
         #region Branchs
-       public DbSet<Branch> Branches { get; set; }
+        public DbSet<Branch> Branches { get; set; }
         #endregion
     }
 
