@@ -17,5 +17,13 @@ namespace Bankify.Api.Controllers.V1._0.Auth
 
         }
 
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest ){
+            var command = new ChangePassword {ChangePasswordRequest=changePasswordRequest };
+            var result = await _mediator.Send(command);
+            return result.IsError? HandleErrorResponse(result.Errors) : Ok(result);
+        }
+
     }
+    
 }
