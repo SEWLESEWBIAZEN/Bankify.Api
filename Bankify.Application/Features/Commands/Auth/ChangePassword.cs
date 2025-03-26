@@ -2,13 +2,14 @@ using Bankify.Application.Common.DTOs.Auth.Request;
 using Bankify.Application.Common.Helpers;
 using Bankify.Application.Repository;
 using Bankify.Application.Services;
+using Bankify.Domain.Models.Shared;
 using Bankify.Domain.Models.Users;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace Bankify.Application.Features.Commands.Auth{
     public class ChangePassword:IRequest<OperationalResult<string>>{
-        public ChangePasswordRequest ChangePasswordRequest{ get; set; }=new ChangePasswordRequest();
+        public ChangePasswordRequest ChangePasswordRequest{ get; set; }
     }
 
     internal class ChangePasswordRequestCommandHandler:IRequestHandler<ChangePassword, OperationalResult<string>>
@@ -44,10 +45,10 @@ namespace Bankify.Application.Features.Commands.Auth{
                     return result;
                 }
 
-                var user= await _users.FirstOrDefaultAsync(us=>us.Email.Equals(sessionEmail, StringComparison.OrdinalIgnoreCase));
+                var user= await _users.FirstOrDefaultAsync(us=>us.Email==sessionEmail && us.RecordStatus!=RecordStatus.Deleted);
 
                 if(!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.Password)){
-                    result.AddError(ErrorCode.ValidationError, "Old password is incorrect.");
+                    result.AddError(ErrorCode.ValidationError, "Current password is incorrect.");
                     return result;
                 }
 
