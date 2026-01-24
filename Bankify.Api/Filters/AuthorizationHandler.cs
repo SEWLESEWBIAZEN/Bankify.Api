@@ -100,6 +100,9 @@ namespace Bankify.Api.Filters
             //{
             //    context.Result = new UnauthorizedObjectResult(new { message = "context is  empty." });
             //}
+
+                _httpContextAccessor?.HttpContext?.Session.SetString("user", "Default User");
+                _httpContextAccessor?.HttpContext?.Session.SetString("email", "sewlesewbiazen65@gmail.com");
         }
     }
 }

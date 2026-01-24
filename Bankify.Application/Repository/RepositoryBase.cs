@@ -77,6 +77,16 @@ namespace Bankify.Application.Repository
                 return false;
 
         }
+        public async Task<bool> RemoveAsync(TEntity entity)
+        {
+            _context.Attach(entity);
+            _context.Entry(entity).State = EntityState.Deleted;
+            if (await _context.SaveChangesAsync() > 0)
+                return true;
+            else
+                return false;
+
+        }
         public async Task<bool> UpdateRangeAsync(IEnumerable<TEntity> entities)
         {
             foreach (var entity in entities)
